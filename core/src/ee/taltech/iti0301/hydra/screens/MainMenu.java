@@ -21,6 +21,12 @@ public class MainMenu implements Screen {
     private static final int EXIT_END_Y = EXIT_START_Y + EXIT_BUTTON_HEIGHT;
     private static final int EXIT_START_X = (Hydra.WIDTH - EXIT_BUTTON_WIDTH) / 2;
     private static final int EXIT_END_X = EXIT_START_X + EXIT_BUTTON_WIDTH;
+    private static final int PLAY_BUTTON_WIDTH = 150;
+    private static final int PLAY_BUTTON_HEIGHT = 75;
+    private static final int PLAY_START_Y = 150;
+    private static final int PLAY_END_Y = PLAY_START_Y + PLAY_BUTTON_HEIGHT;
+    private static final int PLAY_START_X = (Hydra.WIDTH - PLAY_BUTTON_WIDTH) / 2;
+    private static final int PLAY_END_X = PLAY_START_X + PLAY_BUTTON_WIDTH;
 
 
     public MainMenu(Hydra game) {
@@ -42,6 +48,15 @@ public class MainMenu implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.begin();
 
+        if (Gdx.input.getX() > PLAY_START_X && Gdx.input.getX() < PLAY_END_X &&
+                Hydra.HEIGHT - Gdx.input.getY() > PLAY_START_Y && Hydra.HEIGHT - Gdx.input.getY() < PLAY_END_Y) {
+            game.batch.draw(playButtonActive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
+            if (Gdx.input.isTouched()) {
+                game.setScreen(new GameScreen(game));
+            }
+        } else {
+            game.batch.draw(playButtonInactive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
+        }
 
         if (Gdx.input.getX() > EXIT_START_X && Gdx.input.getX() < EXIT_END_X &&
         Hydra.HEIGHT - Gdx.input.getY() > EXIT_START_Y && Hydra.HEIGHT - Gdx.input.getY() < EXIT_END_Y) {
