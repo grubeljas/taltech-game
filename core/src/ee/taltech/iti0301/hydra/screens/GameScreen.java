@@ -5,12 +5,17 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import ee.taltech.iti0301.hydra.Hydra;
 
 public class GameScreen implements Screen {
 
     public static final float SPEED = 140;
     Texture img;
+    TiledMap tiledMap;
 
     float x;
     float y;
@@ -24,6 +29,7 @@ public class GameScreen implements Screen {
     @Override
     public void show () {
         img = new Texture("badlogic.jpg");
+        tiledMap = new TmxMapLoader().load("FirstMap.tmx");
     }
 
     @Override
