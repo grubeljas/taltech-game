@@ -13,7 +13,7 @@ import ee.taltech.iti0301.hydra.Hydra;
 
 public class GameScreen implements Screen {
 
-    public static final float SPEED = 140;
+    public static final float SPEED = 15;
     Texture img;
     TiledMap tiledMap;
     OrthogonalTiledMapRenderer renderer;
@@ -57,8 +57,9 @@ public class GameScreen implements Screen {
         renderer.setView(camera);
         renderer.render();
 
+        hydra.batch.setProjectionMatrix(camera.combined);
         hydra.batch.begin();
-        hydra.batch.draw(img, x, y, 100, 100);
+        hydra.batch.draw(img, x, y, 3, 3);
         hydra.batch.end();
     }
 
