@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.1" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="../TX Tileset Grass.tsx"/>
+ <tileset firstgid="50" source="../TX Tileset Stone Ground.tsx"/>
+ <tileset firstgid="99" source="../TX Shadow.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztmcEOwyAIhtvb1lsfp+//YrtsCXGAPyhVGw5/slErfIim6r5t256aWgfR6Fh6cazMw3GszpRKpZ6p6yvEbrVx8vpOjnaOnr5b+zoF26m8P5JDUisHUldIDfbg+GkFDq2uypg5Nuuckd7tNT+Q3KMcWrtIDm0uUL/oeqq1i+I4FfsKHLTf8j8ij69I1WKVfs8uLdbZOehetsbxKjQ69pIB2a+XjCUToqdwRPGgHAfDMbNqcT6FIxUjz7czfa6dOaLf4KVPzzmmlYNrw/n15KSVRetfy6/k19vOMoY9ODgbF581L1rbmTm4sep91n8Xx1GwXMTeykD7lupZm5eWdYPmv2Wec/3fxcHVk5eltmbQWrXWGmqjfiTflhrichzJYfFdY+DyII1pBAfq28JSu+eMuPfsdb+K7p2iOFL/ehs0Ola0lixM0fKMBzJPVuHxjF806+jaTdX1AaFcblw=
+  </data>
+ </layer>
+</map>
