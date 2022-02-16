@@ -32,7 +32,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show () {
-        img = new Texture("badlogic.jpg");
+        img = new Texture("prototank.png");
         tiledMap = new TmxMapLoader().load("Map_assets/FirstMap.tmx");
         renderer = new OrthogonalTiledMapRenderer(tiledMap, 1/32f);
     }
@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
         renderer.render();
 
         hydra.batch.begin();
-        hydra.batch.draw(img, x, y);
+        hydra.batch.draw(img, x, y, 100, 100);
         hydra.batch.end();
     }
 
