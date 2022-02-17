@@ -6,8 +6,16 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import ee.taltech.iti0301.hydra.Hydra;
+import ee.taltech.iti0301.hydra.networking.Networking;
 import jdk.tools.jmod.Main;
+
+import java.io.IOException;
+
+import static ee.taltech.iti0301.hydra.networking.Networking.*;
 
 public class MainMenu implements Screen {
 
@@ -16,6 +24,9 @@ public class MainMenu implements Screen {
     Texture exitButtonInactive;
     Texture playButtonActive;
     Texture playButtonInactive;
+
+    Client lobbyClient;
+    Client gameClient;
 
     private static final int EXIT_BUTTON_WIDTH = 20;
     private static final int EXIT_BUTTON_HEIGHT = 10;
@@ -36,6 +47,47 @@ public class MainMenu implements Screen {
 
     public MainMenu(Hydra game) {
         this.game = game;
+
+        lobbyClient = new Client();
+        lobbyClient.start();
+        gameClient = new Client();
+        gameClient.start();
+        Networking.register(lobbyClient);
+
+        lobbyClient.addListener(new Listener() {
+
+            public void connected (Connection connection) {
+                System.out.println("CONNECTED");
+                Networking.RegisterName registerName = new Networking.RegisterName();
+                registerName.name = "UgaBuga";
+                lobbyClient.sendTCP(registerName);
+            }
+
+            public void received (Connection connection, Object object) {
+                if (object instanceof Networking.RegistrationResponse) {
+                    Networking.RegistrationResponse response = (Networking.RegistrationResponse) object;
+                    System.out.println(response.text);
+                }
+
+                if (object instanceof Networking.GameServerPorts) {
+                    Networking.GameServerPorts ports = (Networking.GameServerPorts) object;
+                    System.out.println(ports.tcp + " " + ports.udp);
+                    try {
+                        gameClient.connect(60000, SERVER_ADDRESS, ports.tcp, ports.udp);
+                        Networking.register(gameClient);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        try {
+            lobbyClient.connect(60000, SERVER_ADDRESS, MAIN_TCP_PORT, MAIN_UPD_PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
@@ -71,7 +123,7 @@ public class MainMenu implements Screen {
                 mouse_position.y > PLAY_START_Y && mouse_position.y < PLAY_END_Y) {
             game.batch.draw(playButtonActive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()) {
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game, gameClient));
             }
         } else {
             game.batch.draw(playButtonInactive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);

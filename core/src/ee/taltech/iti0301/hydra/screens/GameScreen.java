@@ -9,9 +9,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0301.hydra.Hydra;
+import ee.taltech.iti0301.hydra.networking.Networking;
 
 public class GameScreen implements Screen {
+
+    Client gameClient;
+    boolean isConnected;
 
     public static final float SPEED = 20;
     Texture tempTankTexture;
@@ -21,11 +26,15 @@ public class GameScreen implements Screen {
 
     float tankPositionX;
     float tankPositionY;
+    boolean tankMoved = false;
 
     Hydra hydra;
 
-    public GameScreen(Hydra hydra) {
+    public GameScreen(Hydra hydra, Client gameClient) {
         this.hydra = hydra;
+
+        this.gameClient = gameClient;
+        isConnected = gameClient.isConnected();
 
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
@@ -41,15 +50,28 @@ public class GameScreen implements Screen {
     private void handleInput() {
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             tankPositionX += SPEED * Gdx.graphics.getDeltaTime();
+            tankMoved = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             tankPositionY -= SPEED * Gdx.graphics.getDeltaTime();
+            tankMoved = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             tankPositionX -= SPEED * Gdx.graphics.getDeltaTime();
+            tankMoved = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             tankPositionY += SPEED * Gdx.graphics.getDeltaTime();
+            tankMoved = true;
+        }
+
+        if (tankMoved && isConnected) {
+            System.out.println(tankPositionX + " " + tankPositionY);
+            Networking.CurrentCoordinates coordinates = new Networking.CurrentCoordinates();
+            coordinates.x = tankPositionX;
+            coordinates.y = tankPositionY;
+            gameClient.sendUDP(coordinates);
+            tankMoved = false;
         }
     }
 
