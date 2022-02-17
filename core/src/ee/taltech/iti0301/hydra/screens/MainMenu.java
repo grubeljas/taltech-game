@@ -3,7 +3,9 @@ package ee.taltech.iti0301.hydra.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector3;
 import ee.taltech.iti0301.hydra.Hydra;
 import jdk.tools.jmod.Main;
 
@@ -15,22 +17,32 @@ public class MainMenu implements Screen {
     Texture playButtonActive;
     Texture playButtonInactive;
 
-    private static final int EXIT_BUTTON_WIDTH = 150;
-    private static final int EXIT_BUTTON_HEIGHT = 75;
-    private static final int EXIT_START_Y = 50;
+    private static final int EXIT_BUTTON_WIDTH = 20;
+    private static final int EXIT_BUTTON_HEIGHT = 10;
+    private static final int EXIT_START_Y = 8;
     private static final int EXIT_END_Y = EXIT_START_Y + EXIT_BUTTON_HEIGHT;
-    private static final int EXIT_START_X = (Hydra.WIDTH - EXIT_BUTTON_WIDTH) / 2;
+    private static final int EXIT_START_X = 41;
     private static final int EXIT_END_X = EXIT_START_X + EXIT_BUTTON_WIDTH;
-    private static final int PLAY_BUTTON_WIDTH = 150;
-    private static final int PLAY_BUTTON_HEIGHT = 75;
-    private static final int PLAY_START_Y = 150;
+
+    private static final int PLAY_BUTTON_WIDTH = 20;
+    private static final int PLAY_BUTTON_HEIGHT = 10;
+    private static final int PLAY_START_Y = 20;
     private static final int PLAY_END_Y = PLAY_START_Y + PLAY_BUTTON_HEIGHT;
-    private static final int PLAY_START_X = (Hydra.WIDTH - PLAY_BUTTON_WIDTH) / 2;
+    private static final int PLAY_START_X = 41;
     private static final int PLAY_END_X = PLAY_START_X + PLAY_BUTTON_WIDTH;
+
+    OrthographicCamera camera;
 
 
     public MainMenu(Hydra game) {
         this.game = game;
+
+        float width = Gdx.graphics.getWidth();
+        float height = Gdx.graphics.getHeight();
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 100f, 100f * (height / width));
+
         this.exitButtonActive = new Texture("exit_button_active.png");
         this.exitButtonInactive = new Texture("exit_button_inactive.png");
         this.playButtonActive = new Texture("play_button_active.png");
@@ -44,12 +56,19 @@ public class MainMenu implements Screen {
 
     @Override
     public void render (float delta) {
-        Gdx.gl.glClearColor(1,0,0,1);
+        Gdx.gl.glClearColor(0,0,1,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        float mouseX = Gdx.input.getX();
+        float mouseY = Gdx.input.getY();
+
+        Vector3 mouse_position = new Vector3(mouseX, mouseY, 0);
+        camera.unproject(mouse_position);
+
+        game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
 
-        if (Gdx.input.getX() > PLAY_START_X && Gdx.input.getX() < PLAY_END_X &&
-                Hydra.HEIGHT - Gdx.input.getY() > PLAY_START_Y && Hydra.HEIGHT - Gdx.input.getY() < PLAY_END_Y) {
+        if (mouse_position.x > PLAY_START_X && mouse_position.x < PLAY_END_X &&
+                mouse_position.y > PLAY_START_Y && mouse_position.y < PLAY_END_Y) {
             game.batch.draw(playButtonActive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()) {
                 game.setScreen(new GameScreen(game));
@@ -58,8 +77,8 @@ public class MainMenu implements Screen {
             game.batch.draw(playButtonInactive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
         }
 
-        if (Gdx.input.getX() > EXIT_START_X && Gdx.input.getX() < EXIT_END_X &&
-        Hydra.HEIGHT - Gdx.input.getY() > EXIT_START_Y && Hydra.HEIGHT - Gdx.input.getY() < EXIT_END_Y) {
+        if (mouse_position.x > EXIT_START_X && mouse_position.x < EXIT_END_X &&
+        mouse_position.y > EXIT_START_Y && mouse_position.y < EXIT_END_Y) {
             game.batch.draw(exitButtonActive, EXIT_START_X, EXIT_START_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()) {
                 Gdx.app.exit();
@@ -74,7 +93,9 @@ public class MainMenu implements Screen {
 
     @Override
     public void resize (int width, int height) {
-
+        camera.viewportWidth = 100f;
+        camera.viewportHeight = 100f * height/width;
+        camera.update();
     }
 
     @Override

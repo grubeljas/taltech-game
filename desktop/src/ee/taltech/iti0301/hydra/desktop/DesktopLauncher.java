@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		config.foregroundFPS = 60;
 		config.width = Hydra.WIDTH;
 		config.height = Hydra.HEIGHT;
-		config.resizable = false;
+//		config.resizable = false;
 		new LwjglApplication(new Hydra(), config);
 	}
 }

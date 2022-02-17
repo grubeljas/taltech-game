@@ -19,15 +19,19 @@ public class GameScreen implements Screen {
     OrthogonalTiledMapRenderer mapRenderer;
     OrthographicCamera camera;
 
-    float x;
-    float y;
+    float tankPositionX;
+    float tankPositionY;
 
     Hydra hydra;
 
     public GameScreen(Hydra hydra) {
         this.hydra = hydra;
+
+        float width = Gdx.graphics.getWidth();
+        float height = Gdx.graphics.getHeight();
+
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 50, 50 * (8f / 12f));
+        camera.setToOrtho(false, 50, 50 * (height / width));
 
         tempTankTexture = new Texture("prototank.png");
         tiledMap = new TmxMapLoader().load("Map_assets/FirstMap.tmx");
@@ -36,16 +40,16 @@ public class GameScreen implements Screen {
 
     private void handleInput() {
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            x += SPEED * Gdx.graphics.getDeltaTime();
+            tankPositionX += SPEED * Gdx.graphics.getDeltaTime();
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            y -= SPEED * Gdx.graphics.getDeltaTime();
+            tankPositionY -= SPEED * Gdx.graphics.getDeltaTime();
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            x -= SPEED * Gdx.graphics.getDeltaTime();
+            tankPositionX -= SPEED * Gdx.graphics.getDeltaTime();
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            y += SPEED * Gdx.graphics.getDeltaTime();
+            tankPositionY += SPEED * Gdx.graphics.getDeltaTime();
         }
     }
 
@@ -57,23 +61,26 @@ public class GameScreen implements Screen {
     public void render (float delta) {
 
         handleInput();
-        camera.position.x = x;
-        camera.position.y = y;
+        camera.position.x = tankPositionX;
+        camera.position.y = tankPositionY;
         camera.update();
 
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         mapRenderer.setView(camera);
         mapRenderer.render();
 
         hydra.batch.setProjectionMatrix(camera.combined);
         hydra.batch.begin();
-        hydra.batch.draw(tempTankTexture, x - 1, y - 1, 3, 3);
+        hydra.batch.draw(tempTankTexture, tankPositionX - 1, tankPositionY - 1, 3, 3);
         hydra.batch.end();
     }
 
     @Override
     public void resize (int width, int height) {
+        camera.viewportWidth = 50f;
+        camera.viewportHeight = 50f * height/width;
+        camera.update();
 
     }
 
