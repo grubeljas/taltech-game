@@ -48,6 +48,12 @@ public class GameScreen implements Screen {
     }
 
     private void handleInput() {
+        if (Gdx.input.isKeyPressed((Input.Keys.E))) {
+            camera.zoom += 0.02;
+        }
+        if (Gdx.input.isKeyPressed((Input.Keys.Q))) {
+            camera.zoom -= 0.02;
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             tankPositionX += SPEED * Gdx.graphics.getDeltaTime();
             tankMoved = true;
