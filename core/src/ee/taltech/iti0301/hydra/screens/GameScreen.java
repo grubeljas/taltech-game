@@ -52,7 +52,7 @@ public class GameScreen implements Screen {
 
         bullets = new ArrayList<>();
         tempTankTexture = new Texture("prototank.png");
-        tiledMap = new TmxMapLoader().load("Map_assets/FirstMap.tmx");
+        tiledMap = new TmxMapLoader().load("Map_assets/SecondMap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/32f);
     }
 
