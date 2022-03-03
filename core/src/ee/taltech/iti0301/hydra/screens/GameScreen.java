@@ -9,9 +9,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0301.hydra.Hydra;
+import ee.taltech.iti0301.hydra.entities.Bullet;
 import ee.taltech.iti0301.hydra.networking.Networking;
+
+import java.util.ArrayList;
 
 public class GameScreen implements Screen {
 
@@ -24,9 +28,12 @@ public class GameScreen implements Screen {
     OrthogonalTiledMapRenderer mapRenderer;
     OrthographicCamera camera;
 
+    ArrayList<Bullet> bullets;
+
     float tankPositionX;
     float tankPositionY;
     boolean tankMoved = false;
+    boolean mousePressed = false;
 
     Hydra hydra;
 
@@ -42,6 +49,7 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 50, 50 * (height / width));
 
+        bullets = new ArrayList<>();
         tempTankTexture = new Texture("prototank.png");
         tiledMap = new TmxMapLoader().load("Map_assets/FirstMap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/32f);
@@ -70,6 +78,9 @@ public class GameScreen implements Screen {
             tankPositionY += SPEED * Gdx.graphics.getDeltaTime();
             tankMoved = true;
         }
+        if (Gdx.input.justTouched()) {
+            mousePressed = true;
+        }
 
         if (tankMoved && isConnected) {
             System.out.println(tankPositionX + " " + tankPositionY);
@@ -93,6 +104,11 @@ public class GameScreen implements Screen {
         camera.position.y = tankPositionY;
         camera.update();
 
+        if (mousePressed) {
+            bullets.add(new Bullet(tankPositionX + 0.1f, tankPositionY, new Vector2(0, 0)));
+            mousePressed = false;
+        }
+
         Gdx.gl.glClearColor(0, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         mapRenderer.setView(camera);
@@ -100,7 +116,11 @@ public class GameScreen implements Screen {
 
         hydra.batch.setProjectionMatrix(camera.combined);
         hydra.batch.begin();
-        hydra.batch.draw(tempTankTexture, tankPositionX - 1, tankPositionY - 1, 3, 3);
+        for (Bullet bullet: bullets) {
+            bullet.update(Gdx.graphics.getDeltaTime());
+            bullet.render(hydra.batch);
+        }
+        hydra.batch.draw(tempTankTexture, tankPositionX - 1.5f, tankPositionY - 1.5f, 5, 5);
         hydra.batch.end();
     }
 
