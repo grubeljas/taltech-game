@@ -52,10 +52,10 @@ public class GameScreen implements Screen {
 
         bullets = new ArrayList<>();
         tempTankTexture = new Texture("prototank.png");
-        tiledMap = new TmxMapLoader().load("Map_assets/FirstMap.tmx");
+        tiledMap = new TmxMapLoader().load("Map_assets/SecondMap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/32f);
     }
-
+//
     private void handleInput() {
         if (Gdx.input.isKeyPressed((Input.Keys.E))) {
             camera.zoom += 0.02;
