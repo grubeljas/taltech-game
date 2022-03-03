@@ -13,7 +13,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0301.hydra.Hydra;
 import ee.taltech.iti0301.hydra.entities.Bullet;
-import ee.taltech.iti0301.hydra.networking.Networking;
+import ee.taltech.iti0301.hydra.networking.NetworkingGame;
+import ee.taltech.iti0301.hydra.networking.NetworkingMain;
 
 import java.util.ArrayList;
 
@@ -84,7 +85,7 @@ public class GameScreen implements Screen {
 
         if (tankMoved && isConnected) {
             System.out.println(tankPositionX + " " + tankPositionY);
-            Networking.CurrentCoordinates coordinates = new Networking.CurrentCoordinates();
+            NetworkingGame.CurrentCoordinates coordinates = new NetworkingGame.CurrentCoordinates();
             coordinates.x = tankPositionX;
             coordinates.y = tankPositionY;
             gameClient.sendUDP(coordinates);

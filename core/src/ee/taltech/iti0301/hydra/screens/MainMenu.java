@@ -10,12 +10,12 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import ee.taltech.iti0301.hydra.Hydra;
-import ee.taltech.iti0301.hydra.networking.Networking;
-import jdk.tools.jmod.Main;
+import ee.taltech.iti0301.hydra.networking.NetworkingGame;
+import ee.taltech.iti0301.hydra.networking.NetworkingMain;
 
 import java.io.IOException;
 
-import static ee.taltech.iti0301.hydra.networking.Networking.*;
+import static ee.taltech.iti0301.hydra.networking.NetworkingMain.*;
 
 public class MainMenu implements Screen {
 
@@ -52,29 +52,29 @@ public class MainMenu implements Screen {
         lobbyClient.start();
         gameClient = new Client();
         gameClient.start();
-        Networking.register(lobbyClient);
+        NetworkingMain.register(lobbyClient);
 
         lobbyClient.addListener(new Listener() {
 
             public void connected (Connection connection) {
                 System.out.println("CONNECTED");
-                Networking.RegisterName registerName = new Networking.RegisterName();
+                NetworkingMain.RegisterName registerName = new NetworkingMain.RegisterName();
                 registerName.name = "UgaBuga";
                 lobbyClient.sendTCP(registerName);
             }
 
             public void received (Connection connection, Object object) {
-                if (object instanceof Networking.RegistrationResponse) {
-                    Networking.RegistrationResponse response = (Networking.RegistrationResponse) object;
+                if (object instanceof NetworkingMain.RegistrationResponse) {
+                    NetworkingMain.RegistrationResponse response = (NetworkingMain.RegistrationResponse) object;
                     System.out.println(response.text);
                 }
 
-                if (object instanceof Networking.GameServerPorts) {
-                    Networking.GameServerPorts ports = (Networking.GameServerPorts) object;
+                if (object instanceof NetworkingMain.GameServerPorts) {
+                    NetworkingMain.GameServerPorts ports = (NetworkingMain.GameServerPorts) object;
                     System.out.println(ports.tcp + " " + ports.udp);
                     try {
                         gameClient.connect(60000, SERVER_ADDRESS, ports.tcp, ports.udp);
-                        Networking.register(gameClient);
+                        NetworkingGame.register(gameClient);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -83,7 +83,7 @@ public class MainMenu implements Screen {
         });
 
         try {
-            lobbyClient.connect(60000, SERVER_ADDRESS, MAIN_TCP_PORT, MAIN_UPD_PORT);
+            lobbyClient.connect(60000, SERVER_ADDRESS, MAIN_TCP_PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }
