@@ -55,7 +55,7 @@ public class GameScreen implements Screen {
         tiledMap = new TmxMapLoader().load("Map_assets/SecondMap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/32f);
     }
-
+//
     private void handleInput() {
         if (Gdx.input.isKeyPressed((Input.Keys.E))) {
             camera.zoom += 0.02;
