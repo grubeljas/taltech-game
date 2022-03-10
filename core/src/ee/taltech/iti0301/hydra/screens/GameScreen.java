@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -13,34 +14,36 @@ import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0301.hydra.Hydra;
 import ee.taltech.iti0301.hydra.entities.Bullet;
+import ee.taltech.iti0301.hydra.entities.Tank;
 import ee.taltech.iti0301.hydra.networking.NetworkingGame;
 import ee.taltech.iti0301.hydra.networking.NetworkingMain;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameScreen implements Screen {
 
     Client gameClient;
     boolean isConnected;
 
-    public static final float SPEED = 20;
-    Texture tempTankTexture;
     TiledMap tiledMap;
     OrthogonalTiledMapRenderer mapRenderer;
     OrthographicCamera camera;
 
+    Tank palyerTank;
     ArrayList<Bullet> bullets;
+    BitmapFont font;
+    TextField textField;
 
-    float tankPositionX;
-    float tankPositionY;
-    boolean tankMoved = false;
     boolean mousePressed = false;
 
     Hydra hydra;
 
     public GameScreen(Hydra hydra, Client gameClient) {
         this.hydra = hydra;
-
+        font = new BitmapFont();
+        textField = new TextField();
         this.gameClient = gameClient;
         isConnected = gameClient.isConnected();
 
@@ -50,10 +53,12 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 50, 50 * (height / width));
 
+        Random r = new Random();
+
         bullets = new ArrayList<>();
-        tempTankTexture = new Texture("prototank.png");
+        palyerTank = new Tank(r.nextInt(10), r.nextInt(10));
         tiledMap = new TmxMapLoader().load("Map_assets/SecondMap.tmx");
-        mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/32f);
+        mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/16f);
     }
 //
     private void handleInput() {
@@ -63,33 +68,17 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed((Input.Keys.Q))) {
             camera.zoom -= 0.02;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            tankPositionX += SPEED * Gdx.graphics.getDeltaTime();
-            tankMoved = true;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            tankPositionY -= SPEED * Gdx.graphics.getDeltaTime();
-            tankMoved = true;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            tankPositionX -= SPEED * Gdx.graphics.getDeltaTime();
-            tankMoved = true;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            tankPositionY += SPEED * Gdx.graphics.getDeltaTime();
-            tankMoved = true;
-        }
         if (Gdx.input.justTouched()) {
             mousePressed = true;
         }
 
-        if (tankMoved && isConnected) {
-            System.out.println(tankPositionX + " " + tankPositionY);
+        if (palyerTank.tankMoved && isConnected) {
+            System.out.println(palyerTank.x + " " + palyerTank.y);
             NetworkingGame.CurrentCoordinates coordinates = new NetworkingGame.CurrentCoordinates();
-            coordinates.x = tankPositionX;
-            coordinates.y = tankPositionY;
+            coordinates.x = palyerTank.x;
+            coordinates.y = palyerTank.y;
             gameClient.sendUDP(coordinates);
-            tankMoved = false;
+            palyerTank.tankMoved = false;
         }
     }
 
@@ -101,12 +90,13 @@ public class GameScreen implements Screen {
     public void render (float delta) {
 
         handleInput();
-        camera.position.x = tankPositionX;
-        camera.position.y = tankPositionY;
+        palyerTank.update();
+        camera.position.x = palyerTank.x;
+        camera.position.y = palyerTank.y;
         camera.update();
 
         if (mousePressed) {
-            bullets.add(new Bullet(tankPositionX + 0.1f, tankPositionY, new Vector2(0, 0)));
+            bullets.add(new Bullet(palyerTank.x + 0.1f, palyerTank.y, new Vector2(0, 0)));
             mousePressed = false;
         }
 
@@ -117,11 +107,12 @@ public class GameScreen implements Screen {
 
         hydra.batch.setProjectionMatrix(camera.combined);
         hydra.batch.begin();
+        font.draw(hydra.batch, palyerTank.rotation + " " + palyerTank.x + " " + palyerTank.y, 10, 10);
         for (Bullet bullet: bullets) {
             bullet.update(Gdx.graphics.getDeltaTime());
             bullet.render(hydra.batch);
         }
-        hydra.batch.draw(tempTankTexture, tankPositionX - 1.5f, tankPositionY - 1.5f, 5, 5);
+        palyerTank.draw(hydra.batch);
         hydra.batch.end();
     }
 
@@ -130,7 +121,6 @@ public class GameScreen implements Screen {
         camera.viewportWidth = 50f;
         camera.viewportHeight = 50f * height/width;
         camera.update();
-
     }
 
     @Override
