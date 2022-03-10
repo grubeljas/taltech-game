@@ -31,8 +31,8 @@ public class Tank {
             tankMoved = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            y += SPEED * Math.sin(rotation) * Gdx.graphics.getDeltaTime();
-            x += SPEED * Math.cos(rotation) * Gdx.graphics.getDeltaTime();
+            y -= SPEED * Math.sin(Math.toRadians(rotation)) * Gdx.graphics.getDeltaTime();
+            x -= SPEED * Math.cos(Math.toRadians(rotation)) * Gdx.graphics.getDeltaTime();
             tankMoved = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -40,13 +40,14 @@ public class Tank {
             tankMoved = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            y += SPEED * Math.sin(rotation) * Gdx.graphics.getDeltaTime();
-            x += SPEED * Math.cos(rotation) * Gdx.graphics.getDeltaTime();
+            y += SPEED * Math.sin(Math.toRadians(rotation)) * Gdx.graphics.getDeltaTime();
+            x += SPEED * Math.cos(Math.toRadians(rotation)) * Gdx.graphics.getDeltaTime();
             tankMoved = true;
         }
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(tankTexture, x - 1.5f, y - 1.5f, 3, 3, 6, 6, 1, 1, rotation);
+        batch.draw(tankTexture, x - 1.5f, y - 1.5f, 3, 3, 6, 6,
+                1, 1, rotation - 90);
     }
 }
