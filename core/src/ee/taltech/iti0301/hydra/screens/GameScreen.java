@@ -11,10 +11,12 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0301.hydra.Hydra;
 import ee.taltech.iti0301.hydra.entities.Bullet;
 import ee.taltech.iti0301.hydra.entities.Tank;
+import ee.taltech.iti0301.hydra.map_utility.TiledObject;
 import ee.taltech.iti0301.hydra.networking.NetworkingGame;
 import ee.taltech.iti0301.hydra.networking.NetworkingMain;
 
@@ -26,6 +28,7 @@ public class GameScreen implements Screen {
 
     Client gameClient;
     boolean isConnected;
+    private World world;
 
     TiledMap tiledMap;
     OrthogonalTiledMapRenderer mapRenderer;
@@ -53,12 +56,15 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 50, 50 * (height / width));
 
+        world = new World(new Vector2(0f, -9.8f), false);
+
         Random r = new Random();
 
         bullets = new ArrayList<>();
         palyerTank = new Tank(r.nextInt(10), r.nextInt(10));
         tiledMap = new TmxMapLoader().load("Map_assets/SecondMap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/16f);
+        TiledObject.parseObjectLayer(world, tiledMap.getLayers().get("object-collision").getObjects());
     }
 //
     private void handleInput() {
