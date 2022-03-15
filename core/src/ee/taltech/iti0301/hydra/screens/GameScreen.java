@@ -90,7 +90,7 @@ public class GameScreen implements Screen {
     public void render (float delta) {
 
         handleInput();
-        palyerTank.update();
+        palyerTank.update(delta);
         camera.position.x = palyerTank.x;
         camera.position.y = palyerTank.y;
         camera.update();
@@ -109,8 +109,8 @@ public class GameScreen implements Screen {
         hydra.batch.begin();
         font.draw(hydra.batch, palyerTank.rotation + " " + palyerTank.x + " " + palyerTank.y, 10, 10);
         for (Bullet bullet: bullets) {
-            bullet.update(Gdx.graphics.getDeltaTime());
-            bullet.render(hydra.batch);
+            bullet.update(delta);
+            bullet.draw(hydra.batch);
         }
         palyerTank.draw(hydra.batch);
         hydra.batch.end();
