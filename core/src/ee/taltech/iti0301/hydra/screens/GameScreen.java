@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -13,13 +12,15 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0301.hydra.Hydra;
-import ee.taltech.iti0301.hydra.entities.Bullet;
-import ee.taltech.iti0301.hydra.entities.Tank;
+import ee.taltech.iti0301.hydra.entity.old.Bullet;
+import ee.taltech.iti0301.hydra.entity.old.Tank;
+import ee.taltech.iti0301.hydra.entity.projectile.Projectile;
+import ee.taltech.iti0301.hydra.entity.tank.TankBody;
 import ee.taltech.iti0301.hydra.networking.NetworkingGame;
-import ee.taltech.iti0301.hydra.networking.NetworkingMain;
 
-import java.awt.*;
+import java.awt.TextField;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GameScreen implements Screen {
@@ -31,8 +32,8 @@ public class GameScreen implements Screen {
     OrthogonalTiledMapRenderer mapRenderer;
     OrthographicCamera camera;
 
-    Tank palyerTank;
-    ArrayList<Bullet> bullets;
+    Tank playerTank;
+    List<Bullet> bullets = new ArrayList<>();
     BitmapFont font;
     TextField textField;
 
@@ -55,10 +56,10 @@ public class GameScreen implements Screen {
 
         Random r = new Random();
 
-        bullets = new ArrayList<>();
-        palyerTank = new Tank(r.nextInt(10), r.nextInt(10));
+        playerTank = new Tank(r.nextInt(10), r.nextInt(10));
         tiledMap = new TmxMapLoader().load("Map_assets/SecondMap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/16f);
+
     }
 //
     private void handleInput() {
@@ -72,13 +73,13 @@ public class GameScreen implements Screen {
             mousePressed = true;
         }
 
-        if (palyerTank.tankMoved && isConnected) {
-            System.out.println(palyerTank.x + " " + palyerTank.y);
+        if (playerTank.tankMoved && isConnected) {
+            System.out.println(playerTank.x + " " + playerTank.y);
             NetworkingGame.CurrentCoordinates coordinates = new NetworkingGame.CurrentCoordinates();
-            coordinates.x = palyerTank.x;
-            coordinates.y = palyerTank.y;
+            coordinates.x = playerTank.x;
+            coordinates.y = playerTank.y;
             gameClient.sendUDP(coordinates);
-            palyerTank.tankMoved = false;
+            playerTank.tankMoved = false;
         }
     }
 
@@ -90,13 +91,13 @@ public class GameScreen implements Screen {
     public void render (float delta) {
 
         handleInput();
-        palyerTank.update();
-        camera.position.x = palyerTank.x;
-        camera.position.y = palyerTank.y;
+        playerTank.update(delta);
+        camera.position.x = playerTank.x;
+        camera.position.y = playerTank.y;
         camera.update();
 
         if (mousePressed) {
-            bullets.add(new Bullet(palyerTank.x + 0.1f, palyerTank.y, new Vector2(0, 0)));
+            bullets.add(new Bullet(playerTank.x + 0.1f, playerTank.y, new Vector2(0, 0)));
             mousePressed = false;
         }
 
@@ -107,12 +108,14 @@ public class GameScreen implements Screen {
 
         hydra.batch.setProjectionMatrix(camera.combined);
         hydra.batch.begin();
-        font.draw(hydra.batch, palyerTank.rotation + " " + palyerTank.x + " " + palyerTank.y, 10, 10);
+
+        font.draw(hydra.batch, playerTank.rotation + " " + playerTank.x + " " + playerTank.y, 10, 10);
         for (Bullet bullet: bullets) {
-            bullet.update(Gdx.graphics.getDeltaTime());
-            bullet.render(hydra.batch);
+            bullet.update(delta);
+            bullet.draw(hydra.batch);
         }
-        palyerTank.draw(hydra.batch);
+        playerTank.draw(hydra.batch);
+
         hydra.batch.end();
     }
 
@@ -141,5 +144,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose () {
         tiledMap.dispose();
+        Projectile.dispose();
+        TankBody.dispose();
     }
 }

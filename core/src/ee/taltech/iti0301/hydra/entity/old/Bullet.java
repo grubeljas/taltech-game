@@ -1,4 +1,4 @@
-package ee.taltech.iti0301.hydra.entities;
+package ee.taltech.iti0301.hydra.entity.old;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -7,13 +7,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import ee.taltech.iti0301.hydra.Hydra;
 
-public class Bullet {
+public class Bullet extends Entity{
 
-    public static final int SPEED = 30;
     public static final int WIDTH = 1;
     public static final int HEIGHT = 2;
     public float angle;
-    private final Texture texture = new Texture("bullet.png");
 
     float x, y;
     Vector2 vector2;
@@ -21,10 +19,11 @@ public class Bullet {
     public boolean remove = false;
 
     public Bullet (float x, float y, Vector2 vector2) {
-        this.x = x;
-        this.y = y;
+        super(x, y);
+        SPEED = 30;
+        texture = new Texture("bullet.png");
         this.vector2 = vector2;
-        this.angle = calculateAngle(vector2);
+        this.rotation = calculateAngle(vector2);
         this.sprite = new Sprite(texture);
     }
 
@@ -45,7 +44,7 @@ public class Bullet {
             remove = true;
     }
 
-    public void render (SpriteBatch batch) {
+    public void draw (SpriteBatch batch) {
         batch.draw(sprite, x, y, 1, 1, WIDTH, HEIGHT, 0.5f, 0.5f, 0);
     }
 
