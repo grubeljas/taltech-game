@@ -8,28 +8,33 @@ public class Entity {
 
     protected float x;
     protected float y;
-    protected float rotation;
+    protected float angle;
     Sprite sprite;
 
-    public Entity(float x, float y, float rotation, Texture texture, float width, float height) {
+    public Entity(float x, float y, float angle, Texture texture, float width, float height) {
+
+        // Entity coordinates (x, y), represent it's center, and angle (rotation)
         this.x = x;
         this.y = y;
-        this.rotation = rotation;
+        this.angle = angle;
 
-        sprite = new Sprite(texture);
-        sprite.setSize(width, height);
-        sprite.setOriginCenter();
-        updateSpritePosition();
+        sprite = new Sprite(texture);       // Creating sprite from texture provided
+        sprite.setSize(width, height);      // Setting sprite size
+        sprite.setOriginCenter();           // Setting the rotation point to the sprite center
+        updateSpritePosition();             // Updating sprite position
     }
 
     protected void updateSpritePosition() {
-        sprite.setCenter(x, y);
-        sprite.setRotation(rotation);
+        sprite.setCenter(x, y);             // Setting sprite center to be on the coordinates
+        sprite.setRotation(angle);       // Setting sprite angle (0 - UP, increases counterclockwise)
     }
 
+    // Method used by render in GameScreen to draw the sprite
     public void draw(SpriteBatch batch) {
         sprite.draw(batch);
     }
+
+    // GETTERS for coordinates and angle (rotation)
 
     public float getX() {
         return x;
@@ -40,6 +45,6 @@ public class Entity {
     }
 
     public float getRotation() {
-        return rotation;
+        return angle;
     }
 }

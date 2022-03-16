@@ -18,8 +18,8 @@ public class Projectile extends Entity implements MovableEntity {
 
     @Override
     public void updatePosition(float deltaTime) {
-        y += SPEED * Math.sin(Math.toRadians(rotation + 90)) * deltaTime;
-        x += SPEED * Math.cos(Math.toRadians(rotation + 90)) * deltaTime;
+        y += SPEED * Math.sin(Math.toRadians(angle + 90)) * deltaTime;
+        x += SPEED * Math.cos(Math.toRadians(angle + 90)) * deltaTime;
         updateSpritePosition();
     }
 

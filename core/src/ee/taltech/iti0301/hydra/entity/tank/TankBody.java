@@ -34,18 +34,18 @@ public class TankBody extends Entity implements MovableEntity {
     @Override
     public void updatePosition(float deltaTime) {
         if (movementDirection == Direction.FORWARD) {
-            y += MOVEMENT_SPEED * Math.sin(Math.toRadians(rotation + 90)) * deltaTime;
-            x += MOVEMENT_SPEED * Math.cos(Math.toRadians(rotation + 90)) * deltaTime;
+            y += MOVEMENT_SPEED * Math.sin(Math.toRadians(angle + 90)) * deltaTime;
+            x += MOVEMENT_SPEED * Math.cos(Math.toRadians(angle + 90)) * deltaTime;
         }
         if (movementDirection == Direction.BACKWARD) {
-            y -= MOVEMENT_SPEED * Math.sin(Math.toRadians(rotation + 90)) * deltaTime;
-            x -= MOVEMENT_SPEED * Math.cos(Math.toRadians(rotation + 90)) * deltaTime;
+            y -= MOVEMENT_SPEED * Math.sin(Math.toRadians(angle + 90)) * deltaTime;
+            x -= MOVEMENT_SPEED * Math.cos(Math.toRadians(angle + 90)) * deltaTime;
         }
         if (rotationDirection == Direction.LEFT) {
-            rotation += ROTATION_SPEED * deltaTime;
+            angle += ROTATION_SPEED * deltaTime;
         }
         if (rotationDirection == Direction.RIGHT) {
-            rotation -= ROTATION_SPEED * deltaTime;
+            angle -= ROTATION_SPEED * deltaTime;
         }
         updateSpritePosition();
     }
