@@ -23,7 +23,7 @@ public class Entity {
     }
 
     protected void updateSpritePosition() {
-        sprite.setPosition(x, y);
+        sprite.setCenter(x, y);
         sprite.setRotation(rotation);
     }
 
