@@ -5,6 +5,7 @@ import ee.taltech.iti0301.hydra.entity.Entity;
 import ee.taltech.iti0301.hydra.entity.MovableEntity;
 
 public class Projectile extends Entity implements MovableEntity {
+
     private static final float WIDTH = 2f;
     private static final float HEIGHT = 2f;
     private static final int SPEED = 10;
@@ -19,7 +20,7 @@ public class Projectile extends Entity implements MovableEntity {
     public void updatePosition(float deltaTime) {
         y += SPEED * Math.sin(Math.toRadians(rotation + 90)) * deltaTime;
         x += SPEED * Math.cos(Math.toRadians(rotation + 90)) * deltaTime;
-        super.updateSpritePosition();
+        updateSpritePosition();
     }
 
     // Not the perfect solution to disposing this stuff, but will work for now.

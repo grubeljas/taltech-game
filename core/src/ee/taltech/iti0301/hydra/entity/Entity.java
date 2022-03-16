@@ -31,4 +31,15 @@ public class Entity {
         sprite.draw(batch);
     }
 
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getRotation() {
+        return rotation;
+    }
 }
