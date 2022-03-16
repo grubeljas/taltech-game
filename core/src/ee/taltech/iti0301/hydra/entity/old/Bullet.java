@@ -1,4 +1,4 @@
-package ee.taltech.iti0301.hydra.entities;
+package ee.taltech.iti0301.hydra.entity.old;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
