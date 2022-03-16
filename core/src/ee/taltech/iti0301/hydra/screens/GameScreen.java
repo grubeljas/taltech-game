@@ -89,6 +89,11 @@ public class GameScreen implements Screen {
             playerTank.setRotationDirection(TankBody.Direction.RIGHT);
         }
 
+        if (mousePressed) {
+            bullets.add(new Bullet(playerTank.getX() + 0.1f, playerTank.getY(), new Vector2(0, 0)));
+            mousePressed = false;
+        }
+
 //        if (tankMoved && isConnected) {
 //            System.out.println(playerTank.x + " " + playerTank.y);
 //            NetworkingGame.CurrentCoordinates coordinates = new NetworkingGame.CurrentCoordinates();
@@ -112,11 +117,6 @@ public class GameScreen implements Screen {
         camera.position.y = playerTank.getY();
         camera.update();
 
-        if (mousePressed) {
-            bullets.add(new Bullet(playerTank.getX() + 0.1f, playerTank.getY(), new Vector2(0, 0)));
-            mousePressed = false;
-        }
-
         Gdx.gl.glClearColor(0, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         mapRenderer.setView(camera);
@@ -125,7 +125,8 @@ public class GameScreen implements Screen {
         hydra.batch.setProjectionMatrix(camera.combined);
         hydra.batch.begin();
 
-        font.draw(hydra.batch, playerTank.getRotation() + " " + playerTank.getX() + " " + playerTank.getY(),
+        font.draw(hydra.batch,
+                String.format("%.2f %.2f %.2f", playerTank.getRotation(), playerTank.getX(), playerTank.getY()),
                 10, 10);
         for (Bullet bullet: bullets) {
             bullet.update(delta);
