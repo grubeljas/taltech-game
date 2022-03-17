@@ -88,8 +88,14 @@ public class GameScreen implements Screen {
         gameSession.movePlayerTank(movementDirection, rotationDirection);
 
         if (mousePressed) {
-            bullets.add(new Bullet(gameSession.getPlayerTank().getX() + 0.1f, gameSession.getPlayerTank().getY(),
-                    new Vector2(0, 0)));
+//            bullets.add(new Bullet(gameSession.getPlayerTank().getX() + 0.1f, gameSession.getPlayerTank().getY(),
+//                    new Vector2(0, 0)));
+//            mousePressed = false;
+            Projectile bullet = new Projectile(5, gameSession.getPlayerTank().getX(), gameSession.getPlayerTank().getY(), gameSession.getPlayerTank().getRotation());
+
+            gameSession.getMovableEntities().add(bullet);
+            gameSession.getEntities().add(bullet);
+            System.out.println(gameSession.getMovableEntities());
             mousePressed = false;
         }
     }

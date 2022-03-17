@@ -6,9 +6,9 @@ import ee.taltech.iti0301.hydra.entity.MovableEntity;
 
 public class Projectile extends Entity implements MovableEntity {
 
-    private static final float WIDTH = 2f;
-    private static final float HEIGHT = 2f;
-    private static final int SPEED = 10;
+    private static final float WIDTH = 0.5f;
+    private static final float HEIGHT = 0.5f;
+    private static final int SPEED = 30;
     private static final Texture BULLET_TEXTURE = new Texture("bullet.png");
 
 
