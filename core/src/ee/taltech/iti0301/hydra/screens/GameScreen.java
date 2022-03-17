@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -42,6 +43,9 @@ public class GameScreen implements Screen {
 
     List<Entity> entities = new ArrayList<>();
 
+    Texture point;
+    float x, y;
+
     public GameScreen(Hydra hydra, Client gameClient) {
         this.hydra = hydra;
         font = new BitmapFont();
@@ -56,6 +60,8 @@ public class GameScreen implements Screen {
         camera.setToOrtho(false, 50, 50 * (height / width));
 
         Random r = new Random();
+
+        point = new Texture("point.png");
 
         playerTank = new TankBody(10, 10, 0);
         tiledMap = new TmxMapLoader().load("Map_assets/SecondMap.tmx");
@@ -122,12 +128,19 @@ public class GameScreen implements Screen {
         mapRenderer.setView(camera);
         mapRenderer.render();
 
+        System.out.println("Tank coordinates: " + playerTank.getX() + ", " + playerTank.getY());
+        System.out.println("Mouse " + Gdx.input.getX() + ", " + Gdx.input.getY());
+        System.out.println(Gdx.graphics.getWidth());
+        x = ((float) Gdx.input.getX() / (float) Gdx.graphics.getWidth()) * camera.viewportWidth - 15;
+        y = ((float) (Gdx.graphics.getHeight() - Gdx.input.getY()) / (float) Gdx.graphics.getHeight()) * camera.viewportHeight - 8;
+        System.out.println("point x " + x);
+        System.out.println("point y " + y);
+
         hydra.batch.setProjectionMatrix(camera.combined);
         hydra.batch.begin();
 
-        font.draw(hydra.batch,
-                String.format("%.2f %.2f %.2f", playerTank.getRotation(), playerTank.getX(), playerTank.getY()),
-                10, 10);
+        hydra.batch.draw(point, x, y);
+
         for (Bullet bullet: bullets) {
             bullet.update(delta);
             bullet.draw(hydra.batch);
