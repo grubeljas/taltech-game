@@ -10,12 +10,13 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.esotericsoftware.kryonet.Client;
 import ee.taltech.iti0301.hydra.Hydra;
 import ee.taltech.iti0301.hydra.entity.Entity;
+import ee.taltech.iti0301.hydra.entity.MovableEntity;
 import ee.taltech.iti0301.hydra.entity.old.Bullet;
 import ee.taltech.iti0301.hydra.entity.projectile.Projectile;
 import ee.taltech.iti0301.hydra.entity.tank.TankBody;
+import ee.taltech.iti0301.hydra.session.GameSession;
 
 import java.awt.TextField;
 import java.util.ArrayList;
@@ -24,14 +25,12 @@ import java.util.Random;
 
 public class GameScreen implements Screen {
 
-    Client gameClient;
-    boolean isConnected;
+    GameSession gameSession;
 
     TiledMap tiledMap;
     OrthogonalTiledMapRenderer mapRenderer;
     OrthographicCamera camera;
 
-    TankBody playerTank;
     List<Bullet> bullets = new ArrayList<>();
     BitmapFont font;
     TextField textField;
@@ -40,14 +39,12 @@ public class GameScreen implements Screen {
 
     Hydra hydra;
 
-    List<Entity> entities = new ArrayList<>();
-
-    public GameScreen(Hydra hydra, Client gameClient) {
+    public GameScreen(Hydra hydra, GameSession gameSession) {
         this.hydra = hydra;
+        this.gameSession = gameSession;
+
         font = new BitmapFont();
         textField = new TextField();
-        this.gameClient = gameClient;
-        isConnected = gameClient.isConnected();
 
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
@@ -57,7 +54,6 @@ public class GameScreen implements Screen {
 
         Random r = new Random();
 
-        playerTank = new TankBody(10, 10, 0);
         tiledMap = new TmxMapLoader().load("Map_assets/SecondMap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/16f);
     }
@@ -73,35 +69,29 @@ public class GameScreen implements Screen {
             mousePressed = true;
         }
 
-        playerTank.setRotationDirection(TankBody.Direction.NONE);
-        playerTank.setMovementDirection(TankBody.Direction.NONE);
+        TankBody.Direction movementDirection = TankBody.Direction.NONE;
+        TankBody.Direction rotationDirection = TankBody.Direction.NONE;
 
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            playerTank.setMovementDirection(TankBody.Direction.BACKWARD);
+            movementDirection = TankBody.Direction.BACKWARD;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            playerTank.setMovementDirection(TankBody.Direction.FORWARD);
+            movementDirection = TankBody.Direction.FORWARD;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            playerTank.setRotationDirection(TankBody.Direction.LEFT);
+            rotationDirection = TankBody.Direction.LEFT;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            playerTank.setRotationDirection(TankBody.Direction.RIGHT);
+            rotationDirection = TankBody.Direction.RIGHT;
         }
+
+        gameSession.movePlayerTank(movementDirection, rotationDirection);
 
         if (mousePressed) {
-            bullets.add(new Bullet(playerTank.getX() + 0.1f, playerTank.getY(), new Vector2(0, 0)));
+            bullets.add(new Bullet(gameSession.getPlayerTank().getX() + 0.1f, gameSession.getPlayerTank().getY(),
+                    new Vector2(0, 0)));
             mousePressed = false;
         }
-
-//        if (tankMoved && isConnected) {
-//            System.out.println(playerTank.x + " " + playerTank.y);
-//            NetworkingGame.CurrentCoordinates coordinates = new NetworkingGame.CurrentCoordinates();
-//            coordinates.x = playerTank.x;
-//            coordinates.y = playerTank.y;
-//            gameClient.sendUDP(coordinates);
-//            tankMoved = false;
-//        }
     }
 
     @Override
@@ -112,9 +102,12 @@ public class GameScreen implements Screen {
     public void render (float delta) {
 
         handleInput();
-        playerTank.updatePosition(delta);
-        camera.position.x = playerTank.getX();
-        camera.position.y = playerTank.getY();
+        // Update positions for all our movable entities
+        for (MovableEntity entity : gameSession.getMovableEntities()) {
+            entity.updatePosition(delta);
+        }
+        camera.position.x = gameSession.getPlayerTank().getX();
+        camera.position.y = gameSession.getPlayerTank().getY();
         camera.update();
 
         Gdx.gl.glClearColor(0, 0, 1, 1);
@@ -125,15 +118,18 @@ public class GameScreen implements Screen {
         hydra.batch.setProjectionMatrix(camera.combined);
         hydra.batch.begin();
 
-        font.draw(hydra.batch,
-                String.format("%.2f %.2f %.2f", playerTank.getRotation(), playerTank.getX(), playerTank.getY()),
+        font.draw(hydra.batch, String.format("%.2f %.2f %.2f", gameSession.getPlayerTank().getRotation(),
+                        gameSession.getPlayerTank().getX(), gameSession.getPlayerTank().getY()),
                 10, 10);
         for (Bullet bullet: bullets) {
             bullet.update(delta);
             bullet.draw(hydra.batch);
         }
-        playerTank.draw(hydra.batch);
 
+        // Draw all our entities
+        for (Entity entity : gameSession.getEntities()) {
+            entity.draw(hydra.batch);
+        }
         hydra.batch.end();
     }
 

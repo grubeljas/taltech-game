@@ -6,12 +6,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Entity {
 
+    protected int id;
     protected float x;
     protected float y;
     protected float angle;
     Sprite sprite;
 
-    public Entity(float x, float y, float angle, Texture texture, float width, float height) {
+    public Entity(int id, float x, float y, float angle, Texture texture, float width, float height) {
+
+        this.id = id;
 
         // Entity coordinates (x, y), represent it's center, and angle (rotation)
         this.x = x;
@@ -46,5 +49,13 @@ public class Entity {
 
     public float getRotation() {
         return angle;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
