@@ -19,8 +19,8 @@ public class TankBody extends Entity implements MovableEntity {
     private Direction rotationDirection = Direction.NONE;
     private Direction movementDirection = Direction.NONE;
 
-    public TankBody(float x, float y, float angle) {
-        super(x, y, angle, TANK_TEXTURE, WIDTH, HEIGHT);
+    public TankBody(int id, float x, float y, float angle) {
+        super(id, x, y, angle, TANK_TEXTURE, WIDTH, HEIGHT);
     }
 
     public void setMovementDirection(Direction movementDirection) {

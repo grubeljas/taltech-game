@@ -12,6 +12,7 @@ import com.esotericsoftware.kryonet.Listener;
 import ee.taltech.iti0301.hydra.Hydra;
 import ee.taltech.iti0301.hydra.networking.NetworkingGame;
 import ee.taltech.iti0301.hydra.networking.NetworkingMain;
+import ee.taltech.iti0301.hydra.session.GameSession;
 
 import java.io.IOException;
 
@@ -27,6 +28,7 @@ public class MainMenu implements Screen {
 
     Client lobbyClient;
     Client gameClient;
+    GameSession gameSession;
 
     private static final int EXIT_BUTTON_WIDTH = 20;
     private static final int EXIT_BUTTON_HEIGHT = 10;
@@ -72,12 +74,6 @@ public class MainMenu implements Screen {
                 if (object instanceof NetworkingMain.GameServerPorts) {
                     NetworkingMain.GameServerPorts ports = (NetworkingMain.GameServerPorts) object;
                     System.out.println(ports.tcp + " " + ports.udp);
-                    try {
-                        gameClient.connect(60000, SERVER_ADDRESS, ports.tcp, ports.udp);
-                        NetworkingGame.register(gameClient);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
             }
         });
@@ -123,7 +119,7 @@ public class MainMenu implements Screen {
                 mouse_position.y > PLAY_START_Y && mouse_position.y < PLAY_END_Y) {
             game.batch.draw(playButtonActive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()) {
-                game.setScreen(new GameScreen(game, gameClient));
+                game.setScreen(new GameScreen(game, new GameSession(gameClient)));
             }
         } else {
             game.batch.draw(playButtonInactive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);

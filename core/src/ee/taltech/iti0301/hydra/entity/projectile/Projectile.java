@@ -12,8 +12,8 @@ public class Projectile extends Entity implements MovableEntity {
     private static final Texture BULLET_TEXTURE = new Texture("bullet.png");
 
 
-    public Projectile(float x, float y, float rotation) {
-        super(x, y, rotation, BULLET_TEXTURE, WIDTH, HEIGHT);
+    public Projectile(int id, float x, float y, float rotation) {
+        super(id, x, y, rotation, BULLET_TEXTURE, WIDTH, HEIGHT);
     }
 
     @Override
