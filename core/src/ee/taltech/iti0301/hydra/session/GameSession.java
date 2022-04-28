@@ -1,5 +1,6 @@
 package ee.taltech.iti0301.hydra.session;
 
+import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -75,7 +76,7 @@ public class GameSession {
         return null;
     }
 
-    public void movePlayerTank(TankBody.Direction movementDirection, TankBody.Direction rotationDirection) {
+    public void movePlayerTank(TankBody.Direction movementDirection, TankBody.Direction rotationDirection, Vector3 mouseLocation) {
         if (client.isConnected()) {
             TankPositionUpdate update = new TankPositionUpdate();
             update.tankId = playerTank.getId();
@@ -88,6 +89,7 @@ public class GameSession {
         } else {
             playerTank.setMovementDirection(movementDirection);
             playerTank.setRotationDirection(rotationDirection);
+            playerTank.setTurretAngle(mouseLocation);
         }
     }
 

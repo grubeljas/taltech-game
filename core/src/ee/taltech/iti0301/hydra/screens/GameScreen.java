@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import ee.taltech.iti0301.hydra.Hydra;
 import ee.taltech.iti0301.hydra.entity.Entity;
 import ee.taltech.iti0301.hydra.entity.MovableEntity;
@@ -38,6 +38,9 @@ public class GameScreen implements Screen {
     boolean mousePressed = false;
 
     Hydra hydra;
+
+    float mouseX, mouseY;
+    Vector3 mouseVector;
 
     public GameScreen(Hydra hydra, GameSession gameSession) {
         this.hydra = hydra;
@@ -85,13 +88,18 @@ public class GameScreen implements Screen {
             rotationDirection = TankBody.Direction.RIGHT;
         }
 
-        gameSession.movePlayerTank(movementDirection, rotationDirection);
+        mouseX = Gdx.input.getX();
+        mouseY = Gdx.input.getY();
+        mouseVector = new Vector3(mouseX, mouseY, 0);
+        camera.unproject(mouseVector);
+
+        gameSession.movePlayerTank(movementDirection, rotationDirection, mouseVector);
 
         if (mousePressed) {
 //            bullets.add(new Bullet(gameSession.getPlayerTank().getX() + 0.1f, gameSession.getPlayerTank().getY(),
 //                    new Vector2(0, 0)));
 //            mousePressed = false;
-            Projectile bullet = new Projectile(5, gameSession.getPlayerTank().getX(), gameSession.getPlayerTank().getY(), gameSession.getPlayerTank().getRotation());
+            Projectile bullet = new Projectile(5, gameSession.getPlayerTank().getX(), gameSession.getPlayerTank().getY(), gameSession.getPlayerTank().getTurret().getRotation());
 
             gameSession.getMovableEntities().add(bullet);
             gameSession.getEntities().add(bullet);

@@ -58,4 +58,16 @@ public class Entity {
     public void setId(int id) {
         this.id = id;
     }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public void setAngle(float angle) {
+        this.angle = angle;
+    }
 }
