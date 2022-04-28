@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Vector2;
 import ee.taltech.iti0301.hydra.Hydra;
 import ee.taltech.iti0301.hydra.entity.Entity;
 import ee.taltech.iti0301.hydra.entity.MovableEntity;
@@ -91,7 +90,7 @@ public class GameScreen implements Screen {
 //            bullets.add(new Bullet(gameSession.getPlayerTank().getX() + 0.1f, gameSession.getPlayerTank().getY(),
 //                    new Vector2(0, 0)));
 //            mousePressed = false;
-            Projectile bullet = new Projectile(5, gameSession.getPlayerTank().getX(), gameSession.getPlayerTank().getY(), gameSession.getPlayerTank().getRotation());
+            Projectile bullet = new Projectile(5, gameSession.getPlayerTank().getX(), gameSession.getPlayerTank().getY(), gameSession.getPlayerTank().getAngle());
 
             gameSession.getMovableEntities().add(bullet);
             gameSession.getEntities().add(bullet);
@@ -124,7 +123,7 @@ public class GameScreen implements Screen {
         hydra.batch.setProjectionMatrix(camera.combined);
         hydra.batch.begin();
 
-        font.draw(hydra.batch, String.format("%.2f %.2f %.2f", gameSession.getPlayerTank().getRotation(),
+        font.draw(hydra.batch, String.format("%.2f %.2f %.2f", gameSession.getPlayerTank().getAngle(),
                         gameSession.getPlayerTank().getX(), gameSession.getPlayerTank().getY()),
                 10, 10);
         for (Bullet bullet: bullets) {

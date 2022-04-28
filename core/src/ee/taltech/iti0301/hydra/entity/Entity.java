@@ -47,7 +47,7 @@ public class Entity {
         return y;
     }
 
-    public float getRotation() {
+    public float getAngle() {
         return angle;
     }
 

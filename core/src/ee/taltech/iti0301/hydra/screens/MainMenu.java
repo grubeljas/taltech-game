@@ -66,15 +66,11 @@ public class MainMenu implements Screen {
             }
 
             public void received (Connection connection, Object object) {
-                if (object instanceof NetworkingMain.RegistrationResponse) {
-                    NetworkingMain.RegistrationResponse response = (NetworkingMain.RegistrationResponse) object;
+                if (object instanceof NetworkingMain.Response) {
+                    NetworkingMain.Response response = (NetworkingMain.Response) object;
                     System.out.println(response.text);
                 }
 
-                if (object instanceof NetworkingMain.GameServerPorts) {
-                    NetworkingMain.GameServerPorts ports = (NetworkingMain.GameServerPorts) object;
-                    System.out.println(ports.tcp + " " + ports.udp);
-                }
             }
         });
 
@@ -119,7 +115,9 @@ public class MainMenu implements Screen {
                 mouse_position.y > PLAY_START_Y && mouse_position.y < PLAY_END_Y) {
             game.batch.draw(playButtonActive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()) {
-                game.setScreen(new GameScreen(game, new GameSession(gameClient)));
+                NetworkingMain.JoinGame join = new JoinGame();
+                lobbyClient.sendTCP(join);
+                game.setScreen(new ActiveLobbyScreen(game, lobbyClient, gameClient));
             }
         } else {
             game.batch.draw(playButtonInactive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);

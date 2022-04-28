@@ -11,8 +11,10 @@ public class NetworkingMain {
         Kryo kryo = endPoint.getKryo();
         kryo.register(SomeRequest.class);
         kryo.register(RegisterName.class);
-        kryo.register(RegistrationResponse.class);
-        kryo.register(GameServerPorts.class);
+        kryo.register(Response.class);
+        kryo.register(JoinGame.class);
+        kryo.register(StartGame.class);
+        kryo.register(ReadyStatus.class);
     }
 
     public static class SomeRequest {
@@ -23,13 +25,20 @@ public class NetworkingMain {
         public String name;
     }
 
-    public static class RegistrationResponse {
+    public static class Response {
         public String text;
     }
 
-    public static class GameServerPorts {
-        public int tcp;
-        public int udp;
+    public static class JoinGame {
+        public int gameId;
+    }
+
+    public static class StartGame {
+        public int gameId;
+    }
+
+    public static class ReadyStatus {
+        public boolean ready;
     }
 }
 

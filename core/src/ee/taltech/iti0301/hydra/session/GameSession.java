@@ -30,22 +30,6 @@ public class GameSession {
 
             @Override
             public void received(Connection connection, Object object) {
-                if (object instanceof ConnectionResponse) {
-                    ConnectionResponse response = (ConnectionResponse) object;
-                    for (TransferEntity entity : response.entities) {
-                        addTank(entity.id, entity.x, entity.y);
-                    }
-                    playerTank = getTankById(response.playerTankId);
-                }
-
-                if (object instanceof TankPositionUpdate) {
-                    TankPositionUpdate update = (TankPositionUpdate) object;
-                    TankBody tank = getTankById(update.tankId);
-                    if (tank != null) {
-                        tank.setMovementDirection(TankBody.Direction.valueOf(update.movementDirection));
-                        tank.setRotationDirection(TankBody.Direction.valueOf(update.rotationDirection));
-                    }
-                }
             }
         });
 
@@ -77,14 +61,6 @@ public class GameSession {
 
     public void movePlayerTank(TankBody.Direction movementDirection, TankBody.Direction rotationDirection) {
         if (client.isConnected()) {
-            TankPositionUpdate update = new TankPositionUpdate();
-            update.tankId = playerTank.getId();
-            update.x = playerTank.getX();
-            update.y = playerTank.getY();
-            update.movementDirection = movementDirection.name();
-            update.rotationDirection = rotationDirection.name();
-
-            client.sendTCP(update);
         } else {
             playerTank.setMovementDirection(movementDirection);
             playerTank.setRotationDirection(rotationDirection);

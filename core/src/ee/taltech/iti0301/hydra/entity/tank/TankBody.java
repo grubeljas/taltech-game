@@ -18,6 +18,8 @@ public class TankBody extends Entity implements MovableEntity {
 
     private Direction rotationDirection = Direction.NONE;
     private Direction movementDirection = Direction.NONE;
+    private boolean blockedHorizontal = false;
+    private boolean blockedVertical = false;
 
     public TankBody(int id, float x, float y, float angle) {
         super(id, x, y, angle, TANK_TEXTURE, WIDTH, HEIGHT);
@@ -54,5 +56,29 @@ public class TankBody extends Entity implements MovableEntity {
     // AssetManager needs to be added as a better way.
     public static void dispose() {
         TANK_TEXTURE.dispose();
+    }
+
+    public Direction getRotationDirection() {
+        return rotationDirection;
+    }
+
+    public Direction getMovementDirection() {
+        return movementDirection;
+    }
+
+    public boolean isBlockedHorizontal() {
+        return blockedHorizontal;
+    }
+
+    public void setBlockedHorizontal(boolean blockedHorizontal) {
+        this.blockedHorizontal = blockedHorizontal;
+    }
+
+    public boolean isBlockedVertical() {
+        return blockedVertical;
+    }
+
+    public void setBlockedVertical(boolean blockedVertical) {
+        this.blockedVertical = blockedVertical;
     }
 }
