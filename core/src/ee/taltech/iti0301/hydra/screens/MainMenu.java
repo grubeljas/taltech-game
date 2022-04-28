@@ -55,6 +55,7 @@ public class MainMenu implements Screen {
         gameClient = new Client();
         gameClient.start();
         NetworkingMain.register(lobbyClient);
+        NetworkingGame.register(gameClient);
 
         lobbyClient.addListener(new Listener() {
 
@@ -114,7 +115,7 @@ public class MainMenu implements Screen {
         if (mouse_position.x > PLAY_START_X && mouse_position.x < PLAY_END_X &&
                 mouse_position.y > PLAY_START_Y && mouse_position.y < PLAY_END_Y) {
             game.batch.draw(playButtonActive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
-            if (Gdx.input.isTouched()) {
+            if (Gdx.input.justTouched()) {
                 NetworkingMain.JoinGame join = new JoinGame();
                 lobbyClient.sendTCP(join);
                 game.setScreen(new ActiveLobbyScreen(game, lobbyClient, gameClient));
@@ -126,15 +127,13 @@ public class MainMenu implements Screen {
         if (mouse_position.x > EXIT_START_X && mouse_position.x < EXIT_END_X &&
         mouse_position.y > EXIT_START_Y && mouse_position.y < EXIT_END_Y) {
             game.batch.draw(exitButtonActive, EXIT_START_X, EXIT_START_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
-            if (Gdx.input.isTouched()) {
+            if (Gdx.input.justTouched()) {
                 Gdx.app.exit();
             }
         } else {
             game.batch.draw(exitButtonInactive, EXIT_START_X, EXIT_START_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
         }
         game.batch.end();
-
-
     }
 
     @Override

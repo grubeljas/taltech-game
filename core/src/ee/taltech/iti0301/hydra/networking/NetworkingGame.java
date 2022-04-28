@@ -19,19 +19,19 @@ public class NetworkingGame {
     }
 
     public static class ConnectionRequest {
-        int playerId;
-        int sessionId;
+        public int playerId;
+        public int sessionId;
     }
 
     public static class UpdateEntity {
-        int id;
-        float x;
-        float y;
-        float angle;
-        String movementDirection;
-        String rotationDirection;
-        boolean blockedHorizontal;
-        boolean blockedVertical;
+        public int id;
+        public float x;
+        public float y;
+        public float angle;
+        public String movementDirection;
+        public String rotationDirection;
+        public boolean blockedHorizontal;
+        public boolean blockedVertical;
     }
 
     public static UpdateEntity createUpdateEntityPacket(TankBody tank) {
