@@ -96,10 +96,10 @@ public class GameScreen implements Screen {
         gameSession.movePlayerTank(movementDirection, rotationDirection, mouseVector);
 
         if (mousePressed) {
-//            bullets.add(new Bullet(gameSession.getPlayerTank().getX() + 0.1f, gameSession.getPlayerTank().getY(),
-//                    new Vector2(0, 0)));
-//            mousePressed = false;
-            Projectile bullet = new Projectile(5, gameSession.getPlayerTank().getX(), gameSession.getPlayerTank().getY(), gameSession.getPlayerTank().getTurret().getRotation());
+            Projectile bullet = new Projectile(5,
+                    gameSession.getPlayerTank().getX(),
+                    gameSession.getPlayerTank().getY(),
+                    gameSession.getPlayerTank().getTurret().getRotation());
 
             gameSession.getMovableEntities().add(bullet);
             gameSession.getEntities().add(bullet);
@@ -124,7 +124,7 @@ public class GameScreen implements Screen {
         camera.position.y = gameSession.getPlayerTank().getY();
         camera.update();
 
-        Gdx.gl.glClearColor(0, 0, 1, 1);
+        Gdx.gl.glClearColor(0.3f, 0.35f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         mapRenderer.setView(camera);
         mapRenderer.render();
