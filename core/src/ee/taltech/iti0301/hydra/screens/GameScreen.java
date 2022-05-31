@@ -16,17 +16,17 @@ import ee.taltech.iti0301.hydra.entity.MovableEntity;
 import ee.taltech.iti0301.hydra.entity.old.Bullet;
 import ee.taltech.iti0301.hydra.entity.projectile.Projectile;
 import ee.taltech.iti0301.hydra.entity.tank.TankBody;
-import ee.taltech.iti0301.hydra.session.GameSession;
+import ee.taltech.iti0301.hydra.networking.Client;
 
 import java.awt.TextField;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class GameScreen implements Screen {
-
-    GameSession gameSession;
-
+    
     TiledMap tiledMap;
     OrthogonalTiledMapRenderer mapRenderer;
     OrthographicCamera camera;
@@ -38,14 +38,17 @@ public class GameScreen implements Screen {
     boolean mousePressed = false;
 
     Hydra hydra;
+    
+    private Client client;
 
     float mouseX, mouseY;
     Vector3 mouseVector;
 
-    public GameScreen(Hydra hydra, GameSession gameSession) {
+    public GameScreen(Hydra hydra, Client client) {
         this.hydra = hydra;
-        this.gameSession = gameSession;
 
+        
+        
         font = new BitmapFont();
         textField = new TextField();
 
@@ -59,6 +62,19 @@ public class GameScreen implements Screen {
 
         tiledMap = new TmxMapLoader().load("Map_assets/SecondMap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/16f);
+    
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    client = new Client(new URI("ws://193.40.255.17:5001")); // 193.40.255.17
+                    client.connectBlocking();
+                    client.setGameToClient(game);
+                } catch (URISyntaxException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 //
     private void handleInput() {
@@ -93,9 +109,9 @@ public class GameScreen implements Screen {
         mouseVector = new Vector3(mouseX, mouseY, 0);
         camera.unproject(mouseVector);
 
-        gameSession.movePlayerTank(movementDirection, rotationDirection, mouseVector);
+        
 
-        if (mousePressed) {
+        /**if (mousePressed) {
             Projectile bullet = new Projectile(5,
                     gameSession.getPlayerTank().getX(),
                     gameSession.getPlayerTank().getY(),
@@ -106,6 +122,7 @@ public class GameScreen implements Screen {
             System.out.println(gameSession.getMovableEntities());
             mousePressed = false;
         }
+         **/
     }
 
     @Override
@@ -146,7 +163,13 @@ public class GameScreen implements Screen {
         }
         hydra.batch.end();
     }
-
+    
+    public List<Bullet> getBullets() {
+        return bullets;
+    }
+    
+    
+    
     @Override
     public void resize (int width, int height) {
         camera.viewportWidth = 50f;
