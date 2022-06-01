@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import ee.taltech.iti0301.hydra.Hydra;
 
-public class Bullet extends Entity{
+public class Bullet extends Entity {
 
     public static final int WIDTH = 1;
     public static final int HEIGHT = 2;

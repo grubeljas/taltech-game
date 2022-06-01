@@ -55,7 +55,7 @@ public class MainMenu implements Screen {
             @Override
             public void run() {
                 try {
-                    client = new Client(new URI("ws://193.40.255.17:5001")); // 193.40.255.17
+                    client = new Client(new URI("ws://10.192.244.9:5000")); // 193.40.255.17
                     client.connectBlocking();
                     client.setGameToClient(game);
                 } catch (URISyntaxException | InterruptedException e) {
@@ -87,7 +87,8 @@ public class MainMenu implements Screen {
                 mouse_position.y > PLAY_START_Y && mouse_position.y < PLAY_END_Y) {
             game.batch.draw(playButtonActive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()) {
-                game.setScreen(new GameScreen(game, client));
+                client.sendMessageToServerToStartGame();
+                dispose();
             }
         } else {
             game.batch.draw(playButtonInactive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);

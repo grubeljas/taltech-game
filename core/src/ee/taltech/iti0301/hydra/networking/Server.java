@@ -30,6 +30,7 @@ public class Server extends WebSocketServer {
         conn.send(serializer.encode(new Message("Welcome to the server!"))); //This method sends a message to the new client
         gameEnded = false;
         if (playerCount < 4) {
+            System.out.println(playerCount);
             playerCount++;
             clientsMap.put(conn, "Player " + playerCount);
             connectedPlayerNames.add("Player " + playerCount);
@@ -74,7 +75,6 @@ public class Server extends WebSocketServer {
         final Message decoded = serializer.decode(message);
         if (decoded.getText().equals("Start game")) {
             serverGame = new ServerGame(playerCount);
-            inLobby = false;
             sendMessagesToClientsToStartGame();
         }
         if (decoded.getText().equals("Sending client data")) {
@@ -117,8 +117,8 @@ public class Server extends WebSocketServer {
     
     
     public static void main(String[] args) {
-        String host = "193.40.255.17"; // 193.40.255.17
-        int port = 5001;
+        String host = "10.192.244.9"; // 193.40.255.17
+        int port = 5000;
         
         WebSocketServer server = new Server(new InetSocketAddress(host, port));
         server.run();

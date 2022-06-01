@@ -50,35 +50,30 @@ public class Client extends WebSocketClient {
         if (decoded.getText().contains("New id:")) {
             clientId = decoded.getText().split(":")[1];
         }
-        if (decoded.getText().equals("connected players")) {
-            Lobby.setConnectedPlayers(decoded.getPlayerNames());
-        }
         if (decoded.getText().equals("Start game")) {
             System.out.println("Client has got a message to start game.");
-            ((Lobby) game.getScreen()).stopMusic();
             Gdx.app.postRunnable(new Runnable() {
                 @Override
                 public void run() {
                     gameScreen = createPlayScreen((Hydra) game);
                     clientGame = createClientGame();
-                    gameScreen.addServerGame(decoded.getServerGame());
-                    game.setScreen(playScreen);
-                    
+                    gameScreen.setServerGame(decoded.getServerGame());
+                    game.setScreen(gameScreen);
                 }
             });
         }
-        if (decoded.getText().equals("Broadcasting players data")) {
+        /**if (decoded.getText().equals("Broadcasting players data")) {
             Gdx.app.postRunnable(new Runnable() {
                 @Override
                 public void run() {
-                    playScreen.addServerGame(decoded.getServerGame());
+                    gameScreen.addServerGame(decoded.getServerGame());
                 }
             });
         }
         if (decoded.getText().contains("disconnection")) {
             String disconnectedPlayerId = decoded.getText().split(":")[1];
             gameScreen.removeBomber(disconnectedPlayerId);
-        }
+        }**/
     }
     
     @Override
@@ -98,7 +93,7 @@ public class Client extends WebSocketClient {
     
     public ClientGame createClientGame() {
         clientGame = new ClientGame();
-        playScreen.setClientGame(clientGame);
+        gameScreen.setClientGame(clientGame);
         return clientGame;
     }
     
@@ -110,7 +105,7 @@ public class Client extends WebSocketClient {
         if ((this.time - messageSentTime) > timeDifference) {
             sendMessageToServerClientData();
             clientGame = new ClientGame();
-            playScreen.setClientGame(clientGame);
+            gameScreen.setClientGame(clientGame);
             this.messageSentTime = this.time;
         }
     }
@@ -125,16 +120,16 @@ public class Client extends WebSocketClient {
     
     public void sendMessageToServerGameOver() {
         send(serializer.encode(new Message("Game over", clientGame)));
-        Lobby.getConnectedPlayers().clear();
+        //Lobby.getConnectedPlayers().clear();
         close();
     }
     
     public void update(float dt) {
         this.time += dt;
         this.sendMessageToServer();
-        if (gameScreen.isGameOver()) {
+        /**if (gameScreen.isGameOver()) {
             sendMessageToServerGameOver();
-        }
+        }**/
     }
     
     
@@ -150,5 +145,4 @@ public class Client extends WebSocketClient {
     public void setPlayScreen(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
     }
-}
 }

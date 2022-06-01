@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import ee.taltech.iti0301.hydra.entity.Entity;
 import ee.taltech.iti0301.hydra.entity.MovableEntity;
-import ee.taltech.iti0301.hydra.entity.old.Tank;
 
 public class TankBody extends Entity implements MovableEntity {
 
@@ -51,7 +50,7 @@ public class TankBody extends Entity implements MovableEntity {
             turret.setX(x);
             turret.setY(y);
         }
-        if (movementDirection == Direction.BACKWARD) {
+        else if (movementDirection == Direction.BACKWARD) {
             y -= MOVEMENT_SPEED * Math.sin(Math.toRadians(angle + 90)) * deltaTime;
             x -= MOVEMENT_SPEED * Math.cos(Math.toRadians(angle + 90)) * deltaTime;
             turret.setX(x);
