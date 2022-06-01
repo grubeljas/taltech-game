@@ -50,12 +50,12 @@ public class MainMenu implements Screen {
         this.exitButtonInactive = new Texture("exit_button_inactive.png");
         this.playButtonActive = new Texture("play_button_active.png");
         this.playButtonInactive = new Texture("play_button_inactive.png");
-    
+
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
                 try {
-                    client = new Client(new URI("ws://10.192.244.9:5000")); // 193.40.255.17
+                    client = new Client(new URI("ws://172.20.72.55:5003")); // 193.40.255.17
                     client.connectBlocking();
                     client.setGameToClient(game);
                 } catch (URISyntaxException | InterruptedException e) {

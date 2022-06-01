@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import ee.taltech.iti0301.hydra.Hydra;
+import ee.taltech.iti0301.hydra.entity.FakeTank;
 import ee.taltech.iti0301.hydra.entity.projectile.Projectile;
 import ee.taltech.iti0301.hydra.entity.tank.TankBody;
 import ee.taltech.iti0301.hydra.networking.Client;
@@ -118,9 +119,9 @@ public class GameScreen implements Screen {
                 bullets.add(projectile);
             }
         }
-        for (TankBody tankBody: serverGame.getTanks()) {
+        for (FakeTank tankBody: serverGame.getTanks()) {
             if (tankBody != null) {
-                allTanks.add(tankBody);
+                allTanks.add(new TankBody(tankBody));
             }
         }
     }
@@ -145,8 +146,7 @@ public class GameScreen implements Screen {
             clientGame.addTankBody();
         }
         
-        allTanks.clear();
-        
+
         client.update(dt);
     }
     
@@ -158,7 +158,9 @@ public class GameScreen implements Screen {
     
     public void setMyTank() {
         for (TankBody tankBody: allTanks) {
-            if (tankBody.getId() == Integer.getInteger(this.client.getName())) {
+            System.out.println(tankBody.getId());
+            System.out.println(client.getName());
+            if (tankBody.getId() == Integer.parseInt(this.client.getName())) {
                 myTank = tankBody;
             } else {
                 this.othersTanks.add(tankBody);
@@ -201,6 +203,7 @@ public class GameScreen implements Screen {
             tankBody.draw(hydra.batch);
         }
         hydra.batch.end();
+        allTanks.clear();
     }
     
     public List<Projectile> getProjectiles() {
@@ -209,6 +212,10 @@ public class GameScreen implements Screen {
     
     public TankBody getMyTank() {
         return myTank;
+    }
+
+    public List<TankBody> getAllTanks() {
+        return allTanks;
     }
     
     @Override

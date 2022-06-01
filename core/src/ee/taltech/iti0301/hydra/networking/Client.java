@@ -45,7 +45,7 @@ public class Client extends WebSocketClient {
     public void onMessage(String message) {
         final Message decoded = serializer.decode(message);
         if (decoded.getText().contains("Player ") && !decoded.getText().contains("disconnection") && !decoded.getText().contains("New id:")) {
-            clientId = decoded.getText();
+            clientId = decoded.getText().split(" ")[1];
         }
         if (decoded.getText().contains("New id:")) {
             clientId = decoded.getText().split(":")[1];
