@@ -1,12 +1,15 @@
 package ee.taltech.iti0301.hydra.networking;
 
 
+import ee.taltech.iti0301.hydra.entity.fakeEntity;
 import java.util.List;
 
 public class Message {
     private final String text;
     private ServerGame serverGame;
     private ClientGame clientGame;
+    
+    private fakeEntity fakeEntity;
     
     private List<String> playerNames;
     
@@ -28,6 +31,11 @@ public class Message {
     public Message(String text, List<String> playerNames) {
         this.text = text;
         this.playerNames = playerNames;
+    }
+    
+    public Message(String text, fakeEntity fakeEntity) {
+        this.text = text;
+        this.fakeEntity = fakeEntity;
     }
     
     public String getText() {

@@ -1,39 +1,37 @@
 package ee.taltech.iti0301.hydra.networking;
 
-import ee.taltech.iti0301.hydra.entity.FakeTank;
+import ee.taltech.iti0301.hydra.entity.fakeEntity;
 import ee.taltech.iti0301.hydra.entity.projectile.Projectile;
-import ee.taltech.iti0301.hydra.entity.tank.TankBody;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ClientGame {
 
-    private List<FakeTank> fakeTanks = new LinkedList<>();
-    private List<Projectile> Projectiles = new LinkedList<>();
+    private fakeEntity fakeTank;
+    private List<fakeEntity> projectiles = new LinkedList<>();
     
-    public List<FakeTank> getFakeTanks() {
-        return fakeTanks;
+    public fakeEntity getFakeTank() {
+        return fakeTank;
     }
     
-    public List<Projectile> getProjectiles() {
-        return Projectiles;
+    public List<fakeEntity> getProjectiles() {
+        return projectiles;
     }
     
     public void addTankBody() {
-        List<TankBody> tankBodies = Client.getPlayScreen().getAllTanks();
-
-        for (TankBody tankBody: tankBodies) {
-            fakeTanks.add(new FakeTank(tankBody));
-        }
-
+        fakeTank = new fakeEntity(Client.getPlayScreen().getMyTank());
+        System.out.println("CLIENT GAME TANK ID IS "+ fakeTank.getId());
     }
     public void addProjectiles() {
-        this.Projectiles = Client.getPlayScreen().getProjectiles();
+        List<Projectile> fakeProjectiles = Client.getPlayScreen().getProjectiles();
+    
+        for (Projectile projectile: fakeProjectiles) {
+            projectiles.add(new fakeEntity(projectile));
+        }
     }
     
     public void clearAllInfo() {
-        this.Projectiles.clear();
-        this.fakeTanks.clear();
+        this.projectiles.clear();
+        this.fakeTank = null;
     }
-    
 }

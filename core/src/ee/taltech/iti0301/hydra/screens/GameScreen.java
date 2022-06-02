@@ -11,7 +11,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import ee.taltech.iti0301.hydra.Hydra;
-import ee.taltech.iti0301.hydra.entity.FakeTank;
+import ee.taltech.iti0301.hydra.entity.fakeEntity;
 import ee.taltech.iti0301.hydra.entity.projectile.Projectile;
 import ee.taltech.iti0301.hydra.entity.tank.TankBody;
 import ee.taltech.iti0301.hydra.networking.Client;
@@ -40,7 +40,6 @@ public class GameScreen implements Screen {
     List<Projectile> bullets = new LinkedList<>();
     TankBody myTank;
     List<TankBody> othersTanks = new LinkedList<>();
-    List<TankBody> allTanks = new LinkedList<>();
     
     float mouseX, mouseY;
     Vector3 mouseVector;
@@ -101,7 +100,7 @@ public class GameScreen implements Screen {
         camera.unproject(mouseVector);
 
         movePlayerTank(movementDirection, rotationDirection, mouseVector);
-
+        /**
         if (mousePressed) {
             Projectile bullet = new Projectile(5,
                     myTank.getX(),
@@ -111,43 +110,46 @@ public class GameScreen implements Screen {
             bullets.add(bullet);
             mousePressed = false;
         }
+         **/
     }
     
     public void updatePlayerInfo() {
-        for (Projectile projectile: serverGame.getBullets()) {
+        for (fakeEntity projectile: serverGame.getBullets()) {
             if (projectile != null) {
-                bullets.add(projectile);
+                bullets.add(new Projectile(projectile));
             }
         }
-        for (FakeTank tankBody: serverGame.getTanks()) {
-            if (tankBody != null) {
-                allTanks.add(new TankBody(tankBody));
+        for (Integer integer: serverGame.getTanks().keySet()) {
+            if (integer != Integer.parseInt(this.client.getName())) {
+                othersTanks.add(new TankBody(serverGame.getTanks().get(integer)));
             }
         }
     }
     
     public void update(float dt) {
         updatePlayerInfo();
-        
-        //TODO gametime
-        
         if (myTank == null) {
             setMyTank();
         }
+        //TODO gametime
+    
+
         
         //TODO remove old projectiles
         
         handleInput();
         
         myTank.updatePosition(dt);
+        System.out.println("MYTANK ID IS "+myTank.getId());
     
         if (clientGame != null) {
+            System.out.println("CHECK IF CLIENT GAME IS NOT NULL");
             clientGame.addProjectiles();
             clientGame.addTankBody();
         }
+        client.setClientGame(clientGame);
         
-
-        client.update(dt);
+        this.client.update(dt);
     }
     
     public void movePlayerTank(TankBody.Direction movementDirection, TankBody.Direction rotationDirection, Vector3 mouseLocation) {
@@ -157,13 +159,11 @@ public class GameScreen implements Screen {
     }
     
     public void setMyTank() {
-        for (TankBody tankBody: allTanks) {
-            System.out.println(tankBody.getId());
-            System.out.println(client.getName());
-            if (tankBody.getId() == Integer.parseInt(this.client.getName())) {
-                myTank = tankBody;
+        for (Integer i: serverGame.getTanks().keySet()) {
+            if (i == Integer.parseInt(this.client.getName())) {
+                myTank = new TankBody(serverGame.getTanks().get(i));
             } else {
-                this.othersTanks.add(tankBody);
+                this.othersTanks.add(new TankBody(serverGame.getTanks().get(i)));
             }
         }
     }
@@ -174,36 +174,36 @@ public class GameScreen implements Screen {
 
     @Override
     public void render (float delta) {
-
+    
         update(delta);
-        
+    
         // Update positions for all our movable entities
         camera.position.x = myTank.getX();
         camera.position.y = myTank.getY();
         camera.update();
-
+    
         Gdx.gl.glClearColor(0.3f, 0.35f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         mapRenderer.setView(camera);
         mapRenderer.render();
-
+    
         hydra.batch.setProjectionMatrix(camera.combined);
         hydra.batch.begin();
-
+    
         font.draw(hydra.batch, String.format("%.2f %.2f %.2f", myTank.getRotation(),
                         myTank.getX(), myTank.getY()),
                 10, 10);
-        for (Projectile bullet: bullets) {
+        for (Projectile bullet : bullets) {
             bullet.updatePosition(delta);
             bullet.draw(hydra.batch);
         }
-
+        myTank.draw(hydra.batch);
         // Draw all our entities
-        for (TankBody tankBody: allTanks) {
+        for (TankBody tankBody : othersTanks) {
             tankBody.draw(hydra.batch);
         }
         hydra.batch.end();
-        allTanks.clear();
+        othersTanks.clear();
     }
     
     public List<Projectile> getProjectiles() {
@@ -212,10 +212,6 @@ public class GameScreen implements Screen {
     
     public TankBody getMyTank() {
         return myTank;
-    }
-
-    public List<TankBody> getAllTanks() {
-        return allTanks;
     }
     
     @Override

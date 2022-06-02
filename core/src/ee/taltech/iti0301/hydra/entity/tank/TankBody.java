@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import ee.taltech.iti0301.hydra.entity.Entity;
 import ee.taltech.iti0301.hydra.entity.MovableEntity;
-import ee.taltech.iti0301.hydra.entity.FakeTank;
+import ee.taltech.iti0301.hydra.entity.fakeEntity;
 
 public class TankBody extends Entity implements MovableEntity {
 
@@ -29,7 +29,7 @@ public class TankBody extends Entity implements MovableEntity {
         turret = new TankTurret(id, x, y, angle);
     }
 
-    public TankBody(FakeTank fakeTank) {
+    public TankBody(fakeEntity fakeTank) {
         super(fakeTank.getId(), fakeTank.getX(), fakeTank.getY(), fakeTank.getRotation(),
                 TANK_TEXTURE, WIDTH, HEIGHT);
         turret = new TankTurret(fakeTank.getId(), fakeTank.getX(), fakeTank.getY(), fakeTank.getRotation());

@@ -3,6 +3,7 @@ package ee.taltech.iti0301.hydra.networking;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import ee.taltech.iti0301.hydra.Hydra;
+import ee.taltech.iti0301.hydra.entity.fakeEntity;
 import ee.taltech.iti0301.hydra.screens.GameScreen;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -62,14 +63,15 @@ public class Client extends WebSocketClient {
                 }
             });
         }
-        /**if (decoded.getText().equals("Broadcasting players data")) {
+        if (decoded.getText().equals("Broadcasting players data")) {
             Gdx.app.postRunnable(new Runnable() {
                 @Override
                 public void run() {
-                    gameScreen.addServerGame(decoded.getServerGame());
+                    gameScreen.setServerGame(decoded.getServerGame());
                 }
             });
         }
+        /**
         if (decoded.getText().contains("disconnection")) {
             String disconnectedPlayerId = decoded.getText().split(":")[1];
             gameScreen.removeBomber(disconnectedPlayerId);
@@ -114,6 +116,11 @@ public class Client extends WebSocketClient {
         send(serializer.encode(new Message("Start game")));  // Kutsutakse välja lobbys nupu vajutusel
     }
     
+    public void sendTankData() {
+        System.out.println("SEND TANK COORD" + clientId);
+        send(serializer.encode(new Message("Sending tank data from:" + clientId, new fakeEntity(gameScreen.getMyTank()))));
+    }
+    
     public void sendMessageToServerClientData() {
         send(serializer.encode(new Message("Sending client data", clientGame)));
     }
@@ -132,6 +139,9 @@ public class Client extends WebSocketClient {
         }**/
     }
     
+    public void setClientGame(ClientGame clientGame) {
+        this.clientGame = clientGame;
+    }
     
     public static GameScreen getPlayScreen() {
         return gameScreen;

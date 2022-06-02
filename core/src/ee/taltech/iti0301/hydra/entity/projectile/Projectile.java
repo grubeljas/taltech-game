@@ -3,6 +3,7 @@ package ee.taltech.iti0301.hydra.entity.projectile;
 import com.badlogic.gdx.graphics.Texture;
 import ee.taltech.iti0301.hydra.entity.Entity;
 import ee.taltech.iti0301.hydra.entity.MovableEntity;
+import ee.taltech.iti0301.hydra.entity.fakeEntity;
 
 public class Projectile extends Entity implements MovableEntity {
 
@@ -14,6 +15,11 @@ public class Projectile extends Entity implements MovableEntity {
 
     public Projectile(int id, float x, float y, float rotation) {
         super(id, x, y, rotation, BULLET_TEXTURE, WIDTH, HEIGHT);
+    }
+    
+    public Projectile(fakeEntity fakeEntity) {
+        super(fakeEntity.getId(), fakeEntity.getX(), fakeEntity.getY(), fakeEntity.getRotation(),
+                BULLET_TEXTURE, WIDTH, HEIGHT);
     }
 
     @Override

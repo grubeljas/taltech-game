@@ -78,11 +78,16 @@ public class Server extends WebSocketServer {
         }
         if (decoded.getText().equals("Sending client data")) {
             if (decoded.getClientGame() != null) {
-                serverGame = new ServerGame(decoded.getClientGame());
+                System.out.println("RECIEVE");
+                System.out.println(decoded.getClientGame().getFakeTank());
+                serverGame = new ServerGame(decoded.getClientGame(), serverGame.getTanks());
                 serverGame.update();
+                System.out.println(serverGame.getTanks());
+
                 sendMessagesToClientsPlayerData();
             }
         }
+        //if (decoded.getText().contains("sending tank data:"))
         if (decoded.getText().equals("Game over")) {
             System.out.println("GAME IS OVER");
             gameEnded = true;
@@ -116,7 +121,7 @@ public class Server extends WebSocketServer {
     
     
     public static void main(String[] args) {
-        String host = "172.20.72.55"; // 193.40.255.17
+        String host = "10.192.244.9"; // 10.192.244.9
         int port = 5003;
         
         WebSocketServer server = new Server(new InetSocketAddress(host, port));
