@@ -121,7 +121,10 @@ public class GameScreen implements Screen {
         }
         for (Integer integer: serverGame.getTanks().keySet()) {
             if (integer != Integer.parseInt(this.client.getName())) {
-                othersTanks.add(new TankBody(serverGame.getTanks().get(integer)));
+                System.out.println("GET ENEMYS TURRET"+serverGame.getTurrets());
+                othersTanks.add(new TankBody(
+                        serverGame.getTanks().get(integer),
+                        serverGame.getTurrets().get(integer)));
             }
         }
     }
@@ -131,8 +134,6 @@ public class GameScreen implements Screen {
         if (myTank == null) {
             setMyTank();
         }
-        //TODO gametime
-    
 
         
         //TODO remove old projectiles
@@ -147,6 +148,7 @@ public class GameScreen implements Screen {
             clientGame.addProjectiles();
             clientGame.addTankBody();
         }
+
         client.setClientGame(clientGame);
         
         this.client.update(dt);
@@ -161,9 +163,9 @@ public class GameScreen implements Screen {
     public void setMyTank() {
         for (Integer i: serverGame.getTanks().keySet()) {
             if (i == Integer.parseInt(this.client.getName())) {
-                myTank = new TankBody(serverGame.getTanks().get(i));
+                myTank = new TankBody(serverGame.getTanks().get(i), serverGame.getTurrets().get(i));
             } else {
-                this.othersTanks.add(new TankBody(serverGame.getTanks().get(i)));
+                this.othersTanks.add(new TankBody(serverGame.getTanks().get(i), serverGame.getTurrets().get(i)));
             }
         }
     }

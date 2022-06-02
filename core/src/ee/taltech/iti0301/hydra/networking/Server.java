@@ -80,9 +80,12 @@ public class Server extends WebSocketServer {
             if (decoded.getClientGame() != null) {
                 System.out.println("RECIEVE");
                 System.out.println(decoded.getClientGame().getFakeTank());
-                serverGame = new ServerGame(decoded.getClientGame(), serverGame.getTanks());
+                serverGame = new ServerGame(
+                        decoded.getClientGame(),
+                        serverGame.getTanks(),
+                        serverGame.getTurrets());
                 serverGame.update();
-                System.out.println(serverGame.getTanks());
+                System.out.println(serverGame.getTurrets());
 
                 sendMessagesToClientsPlayerData();
             }
@@ -121,7 +124,8 @@ public class Server extends WebSocketServer {
     
     
     public static void main(String[] args) {
-        String host = "10.192.244.9"; // 10.192.244.9
+        //String host = "10.192.244.9"; // 10.192.244.9
+        String host = "172.20.72.55";
         int port = 5003;
         
         WebSocketServer server = new Server(new InetSocketAddress(host, port));

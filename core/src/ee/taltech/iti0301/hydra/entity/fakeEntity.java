@@ -33,5 +33,14 @@ public class fakeEntity {
     public int getId() {
         return id;
     }
-    
+
+    @Override
+    public String toString() {
+        return "fakeEntity{" +
+                "id=" + id +
+                ", x=" + x +
+                ", y=" + y +
+                ", angle=" + angle +
+                '}';
+    }
 }

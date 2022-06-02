@@ -8,10 +8,15 @@ import java.util.List;
 public class ClientGame {
 
     private fakeEntity fakeTank;
+    private fakeEntity fakeTurret;
     private List<fakeEntity> projectiles = new LinkedList<>();
     
     public fakeEntity getFakeTank() {
         return fakeTank;
+    }
+
+    public fakeEntity getFakeTurret() {
+        return fakeTurret;
     }
     
     public List<fakeEntity> getProjectiles() {
@@ -20,6 +25,7 @@ public class ClientGame {
     
     public void addTankBody() {
         fakeTank = new fakeEntity(Client.getPlayScreen().getMyTank());
+        fakeTurret = new fakeEntity(Client.getPlayScreen().getMyTank().getTurret());
         System.out.println("CLIENT GAME TANK ID IS "+ fakeTank.getId());
     }
     public void addProjectiles() {

@@ -29,10 +29,11 @@ public class TankBody extends Entity implements MovableEntity {
         turret = new TankTurret(id, x, y, angle);
     }
 
-    public TankBody(fakeEntity fakeTank) {
+    public TankBody(fakeEntity fakeTank, fakeEntity fakeEntity) {
         super(fakeTank.getId(), fakeTank.getX(), fakeTank.getY(), fakeTank.getRotation(),
                 TANK_TEXTURE, WIDTH, HEIGHT);
-        turret = new TankTurret(fakeTank.getId(), fakeTank.getX(), fakeTank.getY(), fakeTank.getRotation());
+        System.out.println("CREATE NEW TURRET "+fakeEntity.getId() +" "+ fakeTank.getX()+" "+ fakeTank.getY()+" "+ fakeEntity.getRotation());
+        this.turret = new TankTurret(fakeEntity.getId(), fakeEntity.getX(), fakeEntity.getY(), fakeEntity.getRotation());
     }
 
     public void setMovementDirection(Direction movementDirection) {
