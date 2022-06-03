@@ -2,6 +2,7 @@ package ee.taltech.iti0301.hydra.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -9,15 +10,15 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import ee.taltech.iti0301.hydra.Hydra;
-import ee.taltech.iti0301.hydra.entity.fakeEntity;
+import ee.taltech.iti0301.hydra.entity.FakeEntity;
 import ee.taltech.iti0301.hydra.entity.projectile.Projectile;
 import ee.taltech.iti0301.hydra.entity.tank.TankBody;
 import ee.taltech.iti0301.hydra.networking.Client;
 import ee.taltech.iti0301.hydra.networking.ClientGame;
 import ee.taltech.iti0301.hydra.networking.ServerGame;
-import java.awt.TextField;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -29,7 +30,7 @@ public class GameScreen implements Screen {
     OrthographicCamera camera;
     
     BitmapFont font;
-    TextField textField;
+    
 
     boolean mousePressed = false;
 
@@ -38,8 +39,12 @@ public class GameScreen implements Screen {
     ClientGame clientGame;
     ServerGame serverGame;
     List<Projectile> bullets = new LinkedList<>();
+    List<Projectile> toRemoveBullets = new LinkedList<>();
+    List<Projectile> newBullets = new LinkedList<>();
     TankBody myTank;
+    boolean enemyIsDead = false;
     List<TankBody> othersTanks = new LinkedList<>();
+    Random random = new Random();
     
     float mouseX, mouseY;
     Vector3 mouseVector;
@@ -49,7 +54,6 @@ public class GameScreen implements Screen {
         this.client = client;
         
         font = new BitmapFont();
-        textField = new TextField();
 
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
@@ -70,8 +74,8 @@ public class GameScreen implements Screen {
         }
         if (Gdx.input.isKeyPressed((Input.Keys.Q))) {
             camera.zoom -= 0.02;
-            if (camera.zoom < 0.1) {
-                camera.zoom = 0.1f;
+            if (camera.zoom < 0.2) {
+                camera.zoom = 0.2f;
             }
         }
         if (Gdx.input.justTouched()) {
@@ -100,28 +104,28 @@ public class GameScreen implements Screen {
         camera.unproject(mouseVector);
 
         movePlayerTank(movementDirection, rotationDirection, mouseVector);
-        /**
+        
         if (mousePressed) {
-            Projectile bullet = new Projectile(5,
+            Projectile bullet = new Projectile(
+                    random.nextInt(100),
                     myTank.getX(),
                     myTank.getY(),
                     myTank.getTurret().getRotation());
 
+            newBullets.add(bullet);
             bullets.add(bullet);
             mousePressed = false;
         }
-         **/
     }
     
     public void updatePlayerInfo() {
-        for (fakeEntity projectile: serverGame.getBullets()) {
+        for (FakeEntity projectile: serverGame.getBullets()) {
             if (projectile != null) {
                 bullets.add(new Projectile(projectile));
             }
         }
         for (Integer integer: serverGame.getTanks().keySet()) {
             if (integer != Integer.parseInt(this.client.getName())) {
-                System.out.println("GET ENEMYS TURRET"+serverGame.getTurrets());
                 othersTanks.add(new TankBody(
                         serverGame.getTanks().get(integer),
                         serverGame.getTurrets().get(integer)));
@@ -134,24 +138,46 @@ public class GameScreen implements Screen {
         if (myTank == null) {
             setMyTank();
         }
+    
+        handleInput();
+        myTank.updatePosition(dt);
+        
+        Rectangle recTank = myTank.getSprite().getBoundingRectangle();
+        Rectangle enemyTank = othersTanks.get(0).getSprite().getBoundingRectangle();
+        for (Projectile bullet: bullets) {
+            bullet.updatePosition(dt);
+            if (bullet.getLive() <= 0) {
+                toRemoveBullets.add(bullet);
+            }
+            if ((recTank.overlaps(bullet.getSprite().getBoundingRectangle())
+                    || enemyTank.overlaps(bullet.getSprite().getBoundingRectangle()))
+                    && bullet.getLive() < 9.8) {
+                toRemoveBullets.add(bullet);
+                myTank.health--;
+                if (myTank.health == 0) {
+                    myTank.isDead = true;
+                    clientGame.addDead(client.getName());
+                    client.sendMessageToServerGameOver();
+                    //TODO death
+                }
+                System.out.println("HIT HIT HIT HIT");
+            }
+        }
+        
 
         
-        //TODO remove old projectiles
-        
-        handleInput();
-        
-        myTank.updatePosition(dt);
-        System.out.println("MYTANK ID IS "+myTank.getId());
-    
         if (clientGame != null) {
-            System.out.println("CHECK IF CLIENT GAME IS NOT NULL");
+            
             clientGame.addProjectiles();
             clientGame.addTankBody();
         }
-
+        
         client.setClientGame(clientGame);
+
         
         this.client.update(dt);
+        
+        newBullets.clear();
     }
     
     public void movePlayerTank(TankBody.Direction movementDirection, TankBody.Direction rotationDirection, Vector3 mouseLocation) {
@@ -178,6 +204,8 @@ public class GameScreen implements Screen {
     public void render (float delta) {
     
         update(delta);
+        
+
     
         // Update positions for all our movable entities
         camera.position.x = myTank.getX();
@@ -190,26 +218,47 @@ public class GameScreen implements Screen {
         mapRenderer.render();
     
         hydra.batch.setProjectionMatrix(camera.combined);
+        
+        bullets.removeAll(toRemoveBullets);
+        toRemoveBullets.clear();
+        
         hydra.batch.begin();
     
+        if (myTank.isDead || enemyIsDead) {
+            //hydra.setScreen(new EndScreen(hydra, othersTanks.get(0).isDead));
+            //dispose();
+            String title;
+            if (myTank.isDead) title = "LOSE";
+            else title = "WIN";
+            font.draw(hydra.batch, title, myTank.getX() - 10, myTank.getY());
+            if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+                Gdx.app.exit();
+            }
+        }
+        
         font.draw(hydra.batch, String.format("%.2f %.2f %.2f", myTank.getRotation(),
                         myTank.getX(), myTank.getY()),
                 10, 10);
+        if(!myTank.isDead) {
+            myTank.draw(hydra.batch);
+        }
+
         for (Projectile bullet : bullets) {
-            bullet.updatePosition(delta);
             bullet.draw(hydra.batch);
         }
-        myTank.draw(hydra.batch);
+        
         // Draw all our entities
         for (TankBody tankBody : othersTanks) {
             tankBody.draw(hydra.batch);
         }
+        
         hydra.batch.end();
         othersTanks.clear();
+        
     }
     
     public List<Projectile> getProjectiles() {
-        return bullets;
+        return newBullets;
     }
     
     public TankBody getMyTank() {
@@ -251,5 +300,9 @@ public class GameScreen implements Screen {
         tiledMap.dispose();
         Projectile.dispose();
         TankBody.dispose();
+    }
+    
+    public void killEnemy() {
+        enemyIsDead = true;
     }
 }

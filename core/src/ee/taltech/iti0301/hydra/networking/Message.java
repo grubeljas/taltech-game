@@ -1,7 +1,7 @@
 package ee.taltech.iti0301.hydra.networking;
 
 
-import ee.taltech.iti0301.hydra.entity.fakeEntity;
+import ee.taltech.iti0301.hydra.entity.FakeEntity;
 import java.util.List;
 
 public class Message {
@@ -9,7 +9,7 @@ public class Message {
     private ServerGame serverGame;
     private ClientGame clientGame;
     
-    private fakeEntity fakeEntity;
+    private FakeEntity fakeEntity;
     
     private List<String> playerNames;
     
@@ -33,7 +33,7 @@ public class Message {
         this.playerNames = playerNames;
     }
     
-    public Message(String text, fakeEntity fakeEntity) {
+    public Message(String text, FakeEntity fakeEntity) {
         this.text = text;
         this.fakeEntity = fakeEntity;
     }

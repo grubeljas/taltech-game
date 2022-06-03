@@ -3,8 +3,6 @@ package ee.taltech.iti0301.hydra;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
-import ee.taltech.iti0301.hydra.screens.GameScreen;
 import ee.taltech.iti0301.hydra.screens.MainMenu;
 
 public class Hydra extends Game {
@@ -19,6 +17,7 @@ public class Hydra extends Game {
 		Texture tankBody = new Texture("tankbody.png");
 		batch = new SpriteBatch();
 		this.setScreen(new MainMenu(this));
+		//this.setScreen(new MainMenu(this));
 	}
 
 	@Override

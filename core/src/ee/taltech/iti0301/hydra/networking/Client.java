@@ -3,7 +3,7 @@ package ee.taltech.iti0301.hydra.networking;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import ee.taltech.iti0301.hydra.Hydra;
-import ee.taltech.iti0301.hydra.entity.fakeEntity;
+import ee.taltech.iti0301.hydra.entity.FakeEntity;
 import ee.taltech.iti0301.hydra.screens.GameScreen;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -71,6 +71,15 @@ public class Client extends WebSocketClient {
                 }
             });
         }
+        if (decoded.getText().equals("Enemy is dead")) {
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    gameScreen.killEnemy();
+                }
+            }
+            );
+        }
         /**
         if (decoded.getText().contains("disconnection")) {
             String disconnectedPlayerId = decoded.getText().split(":")[1];
@@ -118,7 +127,7 @@ public class Client extends WebSocketClient {
     
     public void sendTankData() {
         System.out.println("SEND TANK COORD" + clientId);
-        send(serializer.encode(new Message("Sending tank data from:" + clientId, new fakeEntity(gameScreen.getMyTank()))));
+        send(serializer.encode(new Message("Sending tank data from:" + clientId, new FakeEntity(gameScreen.getMyTank()))));
     }
     
     public void sendMessageToServerClientData() {

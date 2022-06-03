@@ -55,8 +55,8 @@ public class MainMenu implements Screen {
             @Override
             public void run() {
                 try {
-                    //client = new Client(new URI("ws://10.192.244.9:5003")); // 193.40.255.17
-                    client = new Client(new URI("ws://172.20.72.55:5003"));
+                    client = new Client(new URI("ws://10.192.244.9:5004")); // 193.40.255.17
+                    //client = new Client(new URI("ws://172.20.72.55:5003"));
                     client.connectBlocking();
                     client.setGameToClient(game);
                 } catch (URISyntaxException | InterruptedException e) {
@@ -105,8 +105,6 @@ public class MainMenu implements Screen {
             game.batch.draw(exitButtonInactive, EXIT_START_X, EXIT_START_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
         }
         game.batch.end();
-
-
     }
 
     @Override

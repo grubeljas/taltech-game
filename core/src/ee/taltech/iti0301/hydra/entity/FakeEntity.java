@@ -1,20 +1,20 @@
 package ee.taltech.iti0301.hydra.entity;
 
-public class fakeEntity {
+public class FakeEntity {
     
     protected int id;
     protected float x;
     protected float y;
     protected float angle;
     
-    public fakeEntity(int id, float x, float y, float angle) {
+    public FakeEntity(int id, float x, float y, float angle) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.angle = angle;
     }
     
-    public fakeEntity(Entity entity) {
+    public FakeEntity(Entity entity) {
         this(entity.id, entity.x, entity.y, entity.angle);
     }
     
@@ -36,7 +36,7 @@ public class fakeEntity {
 
     @Override
     public String toString() {
-        return "fakeEntity{" +
+        return "FakeEntity{" +
                 "id=" + id +
                 ", x=" + x +
                 ", y=" + y +
