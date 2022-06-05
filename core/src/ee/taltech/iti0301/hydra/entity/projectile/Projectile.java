@@ -10,7 +10,7 @@ public class Projectile extends Entity implements MovableEntity {
 
     private static final float WIDTH = 0.5f;
     private static final float HEIGHT = 0.5f;
-    private static final int SPEED = 30;
+    private static final int SPEED = 50;
     private float live = 10;
     private static final Texture BULLET_TEXTURE = new Texture("bullet.png");
     

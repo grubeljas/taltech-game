@@ -64,6 +64,10 @@ public class TankBody extends Entity implements MovableEntity {
             y -= MOVEMENT_SPEED * Math.sin(Math.toRadians(angle + 90)) * deltaTime;
             x -= MOVEMENT_SPEED * Math.cos(Math.toRadians(angle + 90)) * deltaTime;
         }
+        if (x < 0) x = 0;
+        if (x > 200) x = 200;
+        if (y < 0) y = 0;
+        if (y > 200) y = 200;
         turret.setX(x);
         turret.setY(y);
         tankRectangle.setX(x);
