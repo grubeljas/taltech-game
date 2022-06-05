@@ -2,20 +2,23 @@ package ee.taltech.iti0301.hydra.entity.tank;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import ee.taltech.iti0301.hydra.entity.Entity;
 import ee.taltech.iti0301.hydra.entity.MovableEntity;
-import ee.taltech.iti0301.hydra.entity.old.Tank;
+import ee.taltech.iti0301.hydra.entity.FakeEntity;
 
 public class TankBody extends Entity implements MovableEntity {
 
-    private static final float WIDTH = 6f;
-    private static final float HEIGHT = 6f;
+    private static final float WIDTH = 3f;
+    private static final float HEIGHT = 3f;
     private static final Texture TANK_TEXTURE = new Texture("tankbody.png");
     private static final int MOVEMENT_SPEED = 20;
     private static final int ROTATION_SPEED = 80;
+    public int health = 10;
 
     private final TankTurret turret;
+    private Rectangle tankRectangle;
 
     public enum Direction {
         RIGHT, LEFT, FORWARD, BACKWARD,NONE
@@ -27,6 +30,14 @@ public class TankBody extends Entity implements MovableEntity {
     public TankBody(int id, float x, float y, float angle) {
         super(id, x, y, angle, TANK_TEXTURE, WIDTH, HEIGHT);
         turret = new TankTurret(id, x, y, angle);
+        tankRectangle = new Rectangle(x, y, WIDTH, HEIGHT);
+    }
+
+    public TankBody(FakeEntity fakeTank, FakeEntity fakeEntity) {
+        super(fakeTank.getId(), fakeTank.getX(), fakeTank.getY(), fakeTank.getRotation(),
+                TANK_TEXTURE, WIDTH, HEIGHT);
+        this.turret = new TankTurret(fakeEntity.getId(), fakeEntity.getX(), fakeEntity.getY(), fakeEntity.getRotation());
+        tankRectangle = new Rectangle(fakeTank.getX(), fakeTank.getY(), WIDTH, HEIGHT);
     }
 
     public void setMovementDirection(Direction movementDirection) {
@@ -48,15 +59,16 @@ public class TankBody extends Entity implements MovableEntity {
         if (movementDirection == Direction.FORWARD) {
             y += MOVEMENT_SPEED * Math.sin(Math.toRadians(angle + 90)) * deltaTime;
             x += MOVEMENT_SPEED * Math.cos(Math.toRadians(angle + 90)) * deltaTime;
-            turret.setX(x);
-            turret.setY(y);
         }
-        if (movementDirection == Direction.BACKWARD) {
+        else if (movementDirection == Direction.BACKWARD) {
             y -= MOVEMENT_SPEED * Math.sin(Math.toRadians(angle + 90)) * deltaTime;
             x -= MOVEMENT_SPEED * Math.cos(Math.toRadians(angle + 90)) * deltaTime;
-            turret.setX(x);
-            turret.setY(y);
         }
+        turret.setX(x);
+        turret.setY(y);
+        tankRectangle.setX(x);
+        tankRectangle.setY(y);
+        
         if (rotationDirection == Direction.LEFT) {
             angle += ROTATION_SPEED * deltaTime;
         }
@@ -64,6 +76,7 @@ public class TankBody extends Entity implements MovableEntity {
             angle -= ROTATION_SPEED * deltaTime;
         }
         updateSpritePosition();
+        
         turret.updatePosition(deltaTime);
     }
 

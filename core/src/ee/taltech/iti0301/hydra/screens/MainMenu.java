@@ -6,29 +6,19 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
-import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
 import ee.taltech.iti0301.hydra.Hydra;
-import ee.taltech.iti0301.hydra.networking.NetworkingGame;
-import ee.taltech.iti0301.hydra.networking.NetworkingMain;
-import ee.taltech.iti0301.hydra.session.GameSession;
-
-import java.io.IOException;
-
-import static ee.taltech.iti0301.hydra.networking.NetworkingMain.*;
+import ee.taltech.iti0301.hydra.networking.Client;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class MainMenu implements Screen {
 
-    Hydra game;
+    final Hydra game;
+    Client client;
     Texture exitButtonActive;
     Texture exitButtonInactive;
     Texture playButtonActive;
     Texture playButtonInactive;
-
-    Client lobbyClient;
-    Client gameClient;
-    GameSession gameSession;
 
     private static final int EXIT_BUTTON_WIDTH = 20;
     private static final int EXIT_BUTTON_HEIGHT = 10;
@@ -47,43 +37,8 @@ public class MainMenu implements Screen {
     OrthographicCamera camera;
 
 
-    public MainMenu(Hydra game) {
+    public MainMenu(final Hydra game) {
         this.game = game;
-
-        lobbyClient = new Client();
-        lobbyClient.start();
-        gameClient = new Client();
-        gameClient.start();
-        NetworkingMain.register(lobbyClient);
-
-        lobbyClient.addListener(new Listener() {
-
-            public void connected (Connection connection) {
-                System.out.println("CONNECTED");
-                NetworkingMain.RegisterName registerName = new NetworkingMain.RegisterName();
-                registerName.name = "UgaBuga";
-                lobbyClient.sendTCP(registerName);
-            }
-
-            public void received (Connection connection, Object object) {
-                if (object instanceof NetworkingMain.RegistrationResponse) {
-                    NetworkingMain.RegistrationResponse response = (NetworkingMain.RegistrationResponse) object;
-                    System.out.println(response.text);
-                }
-
-                if (object instanceof NetworkingMain.GameServerPorts) {
-                    NetworkingMain.GameServerPorts ports = (NetworkingMain.GameServerPorts) object;
-                    System.out.println(ports.tcp + " " + ports.udp);
-                }
-            }
-        });
-
-        try {
-            lobbyClient.connect(60000, SERVER_ADDRESS, MAIN_TCP_PORT);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
 
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
@@ -95,6 +50,20 @@ public class MainMenu implements Screen {
         this.exitButtonInactive = new Texture("exit_button_inactive.png");
         this.playButtonActive = new Texture("play_button_active.png");
         this.playButtonInactive = new Texture("play_button_inactive.png");
+
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    client = new Client(new URI("ws://82.147.162.36:5004")); // 193.40.255.17
+                    //client = new Client(new URI("ws://172.20.72.55:5003"));
+                    client.connectBlocking();
+                    client.setGameToClient(game);
+                } catch (URISyntaxException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -119,7 +88,8 @@ public class MainMenu implements Screen {
                 mouse_position.y > PLAY_START_Y && mouse_position.y < PLAY_END_Y) {
             game.batch.draw(playButtonActive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
             if (Gdx.input.isTouched()) {
-                game.setScreen(new GameScreen(game, new GameSession(gameClient)));
+                client.sendMessageToServerToStartGame();
+                dispose();
             }
         } else {
             game.batch.draw(playButtonInactive, PLAY_START_X, PLAY_START_Y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
@@ -135,8 +105,6 @@ public class MainMenu implements Screen {
             game.batch.draw(exitButtonInactive, EXIT_START_X, EXIT_START_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
         }
         game.batch.end();
-
-
     }
 
     @Override
