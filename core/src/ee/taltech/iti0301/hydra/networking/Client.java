@@ -71,20 +71,7 @@ public class Client extends WebSocketClient {
                 }
             });
         }
-        if (decoded.getText().equals("Enemy is dead")) {
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    gameScreen.killEnemy();
-                }
-            }
-            );
-        }
-        /**
-        if (decoded.getText().contains("disconnection")) {
-            String disconnectedPlayerId = decoded.getText().split(":")[1];
-            gameScreen.removeBomber(disconnectedPlayerId);
-        }**/
+
     }
     
     @Override

@@ -32,11 +32,11 @@ public class ServerGame {
             
             for (int i = 1; i <= ServerGame.playerCount; i++) {
                 if (i == 1) {
-                    tanks.put(i, new FakeEntity(i, r.nextInt(20), r.nextInt(20), 45));
+                    tanks.put(i, new FakeEntity(i, 10, 10, 335));
                     turrets.put(i, new FakeEntity(i, tanks.get(i).getX(), tanks.get(i).getY(), 0));
                 } else if (i == 2) {
-                    tanks.put(i, new FakeEntity(i, 200 - r.nextInt(20), 200 - r.nextInt(20), 225));
-                    turrets.put(i, new FakeEntity(i, tanks.get(i).getX(), tanks.get(i).getY(),225));
+                    tanks.put(i, new FakeEntity(i,  185, 185, 135));
+                    turrets.put(i, new FakeEntity(i, tanks.get(i).getX(), tanks.get(i).getY(),0));
                 }
             }
         } catch (ExceptionInInitializerError e) {

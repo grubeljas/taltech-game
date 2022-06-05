@@ -9,7 +9,6 @@ public class TankTurret extends Entity implements MovableEntity {
     private static final float WIDTH = 3f;
     private static final float HEIGHT = 3f;
     private static final Texture TURRET_TEXTURE = new Texture("turret.png");
-    private static final int MOVEMENT_SPEED = 20;
 
     public TankTurret(int id, float x, float y, float angle) {
         super(id, x, y, angle, TURRET_TEXTURE, WIDTH, HEIGHT);

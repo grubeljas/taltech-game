@@ -13,10 +13,9 @@ public class TankBody extends Entity implements MovableEntity {
     private static final float WIDTH = 3f;
     private static final float HEIGHT = 3f;
     private static final Texture TANK_TEXTURE = new Texture("tankbody.png");
-    private static final int MOVEMENT_SPEED = 200;
+    private static final int MOVEMENT_SPEED = 20;
     private static final int ROTATION_SPEED = 80;
     public int health = 10;
-    public boolean isDead = false;
 
     private final TankTurret turret;
     private Rectangle tankRectangle;

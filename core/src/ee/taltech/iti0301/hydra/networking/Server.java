@@ -122,7 +122,7 @@ public class Server extends WebSocketServer {
     
     
     public static void main(String[] args) {
-        String host = "10.192.244.9"; // 10.192.244.9
+        String host = "82.147.162.36"; // 10.192.244.9
         //String host = "172.20.72.55";
         int port = 5004;
         

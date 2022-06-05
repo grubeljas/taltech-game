@@ -30,7 +30,6 @@ public class GameScreen implements Screen {
     OrthographicCamera camera;
     
     BitmapFont font;
-    
 
     boolean mousePressed = false;
 
@@ -42,7 +41,9 @@ public class GameScreen implements Screen {
     List<Projectile> toRemoveBullets = new LinkedList<>();
     List<Projectile> newBullets = new LinkedList<>();
     TankBody myTank;
+    int enemyLifes = 10;
     boolean enemyIsDead = false;
+    boolean myTankIsDead = false;
     List<TankBody> othersTanks = new LinkedList<>();
     Random random = new Random();
     
@@ -125,10 +126,14 @@ public class GameScreen implements Screen {
             }
         }
         for (Integer integer: serverGame.getTanks().keySet()) {
-            if (integer != Integer.parseInt(this.client.getName())) {
-                othersTanks.add(new TankBody(
-                        serverGame.getTanks().get(integer),
-                        serverGame.getTurrets().get(integer)));
+            try {
+                if (integer != Integer.parseInt(this.client.getName())) {
+                    othersTanks.add(new TankBody(
+                            serverGame.getTanks().get(integer),
+                            serverGame.getTurrets().get(integer)));
+                }
+            } catch (NumberFormatException e) {
+                Gdx.app.exit();
             }
         }
     }
@@ -151,19 +156,23 @@ public class GameScreen implements Screen {
             }
             if ((recTank.overlaps(bullet.getSprite().getBoundingRectangle())
                     || enemyTank.overlaps(bullet.getSprite().getBoundingRectangle()))
-                    && bullet.getLive() < 9.8) {
+                    && bullet.getLive() < 9.7) {
                 toRemoveBullets.add(bullet);
-                myTank.health--;
+                if (recTank.overlaps(bullet.getSprite().getBoundingRectangle())) {
+                    myTank.health--;
+                } else {
+                    enemyLifes--;
+                }
+                System.out.println(myTank.health);
                 if (myTank.health == 0) {
-                    myTank.isDead = true;
-                    clientGame.addDead(client.getName());
-                    client.sendMessageToServerGameOver();
-                    //TODO death
+                    myTankIsDead = true;
+                }
+                if (enemyLifes == 0) {
+                    enemyIsDead = true;
                 }
                 System.out.println("HIT HIT HIT HIT");
             }
         }
-        
 
         
         if (clientGame != null) {
@@ -204,9 +213,7 @@ public class GameScreen implements Screen {
     public void render (float delta) {
     
         update(delta);
-        
 
-    
         // Update positions for all our movable entities
         camera.position.x = myTank.getX();
         camera.position.y = myTank.getY();
@@ -224,22 +231,17 @@ public class GameScreen implements Screen {
         
         hydra.batch.begin();
     
-        if (myTank.isDead || enemyIsDead) {
-            //hydra.setScreen(new EndScreen(hydra, othersTanks.get(0).isDead));
-            //dispose();
+        if (myTankIsDead || enemyIsDead) {
             String title;
-            if (myTank.isDead) title = "LOSE";
+            if (myTankIsDead) title = "LOSE";
             else title = "WIN";
             font.draw(hydra.batch, title, myTank.getX() - 10, myTank.getY());
             if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
                 Gdx.app.exit();
             }
         }
-        
-        font.draw(hydra.batch, String.format("%.2f %.2f %.2f", myTank.getRotation(),
-                        myTank.getX(), myTank.getY()),
-                10, 10);
-        if(!myTank.isDead) {
+
+        if(!myTankIsDead) {
             myTank.draw(hydra.batch);
         }
 
@@ -249,7 +251,9 @@ public class GameScreen implements Screen {
         
         // Draw all our entities
         for (TankBody tankBody : othersTanks) {
-            tankBody.draw(hydra.batch);
+            if (!enemyIsDead) {
+                tankBody.draw(hydra.batch);
+            }
         }
         
         hydra.batch.end();
