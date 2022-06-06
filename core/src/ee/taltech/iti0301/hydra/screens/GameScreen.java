@@ -75,8 +75,8 @@ public class GameScreen implements Screen {
         }
         if (Gdx.input.isKeyPressed((Input.Keys.Q))) {
             camera.zoom -= 0.02;
-            if (camera.zoom < 0.2) {
-                camera.zoom = 0.2f;
+            if (camera.zoom < 0.4) {
+                camera.zoom = 0.4f;
             }
         }
         if (Gdx.input.justTouched()) {
@@ -156,7 +156,7 @@ public class GameScreen implements Screen {
             }
             if ((recTank.overlaps(bullet.getSprite().getBoundingRectangle())
                     || enemyTank.overlaps(bullet.getSprite().getBoundingRectangle()))
-                    && bullet.getLive() < 9.7) {
+                    && bullet.getLive() < 9.75) {
                 toRemoveBullets.add(bullet);
                 if (recTank.overlaps(bullet.getSprite().getBoundingRectangle())) {
                     myTank.health--;
